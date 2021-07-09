@@ -38,7 +38,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         #self.boutonLire.clicked.connect(self.read("test.igs"))
 
     def read(self):
-        filename=self.__champTexte.text()0
+        filename = self.__champTexte.text()
         with open(filename, 'r') as f:
 
             param_string = ''
