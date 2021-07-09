@@ -17,15 +17,28 @@ def parse_float(str_value):
 class MaFenetre(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
+
+        tabs = QtWidgets.QTabWidget()
+        tabs.setTabPosition(QtWidgets.QTabWidget.North)
+        tabs.setMovable(False)
+
         self.boutonLire = QtWidgets.QPushButton("enter")
+        self.__champTexte = QtWidgets.QLineEdit("")
+        self.__champTexte.setPlaceholderText("exemple.igs")
 
         layout1 = QtWidgets.QGridLayout()
+        layout1.addWidget(self.__champTexte,2,2)
         layout1.addWidget(self.boutonLire, 3, 2)
-        self.setLayout(layout1)
+        widget1 = QtWidgets.QWidget()
+        widget1.setLayout(layout1)
+        tabs.addTab(widget1, "Inserire una fattura")
+        self.setCentralWidget(tabs)
 
-        self.boutonLire.clicked.connect(self.read(filename="test.igs"))
+        self.boutonLire.clicked.connect(self.read)
+        #self.boutonLire.clicked.connect(self.read("test.igs"))
 
-    def read(self,filename):
+    def read(self):
+        filename=self.__champTexte.text()0
         with open(filename, 'r') as f:
 
             param_string = ''
@@ -58,33 +71,35 @@ class MaFenetre(QtWidgets.QMainWindow):
                         entity_type_number = int(data[0:8].strip())
                         if entity_type_number == 116:  # Point
                             e = Point()
-
-                        e.add_section(data[0:8], 'entity_type_number')
-                        e.add_section(data[8:16], 'parameter_pointer')
-                        e.add_section(data[16:24], 'structure')
-                        e.add_section(data[24:32], 'line_font_pattern')
-                        e.add_section(data[32:40], 'level')
-                        e.add_section(data[40:48], 'view')
-                        e.add_section(data[48:56], 'transform')
-                        e.add_section(data[56:65], 'label_assoc')
-                        e.add_section(data[65:72], 'status_number')
-                        e.sequence_number = int(data[73:].strip())
+                            e.add_section(data[0:8], 'entity_type_number')
+                            e.add_section(data[8:16], 'parameter_pointer')
+                            e.add_section(data[16:24], 'structure')
+                            e.add_section(data[24:32], 'line_font_pattern')
+                            e.add_section(data[32:40], 'level')
+                            e.add_section(data[40:48], 'view')
+                            e.add_section(data[48:56], 'transform')
+                            e.add_section(data[56:65], 'label_assoc')
+                            e.add_section(data[65:72], 'status_number')
+                            e.sequence_number = int(data[73:].strip())
 
                         first_dict_line = False
 
                     else:
-                        e.add_section(data[8:16], 'line_weight_number')
-                        e.add_section(data[16:24], 'color_number')
-                        e.add_section(data[24:32], 'param_line_count')
-                        e.add_section(data[32:40], 'form_number')
-                        e.add_section(data[56:64], 'entity_label', type='string')
-                        e.add_section(data[64:72], 'entity_subs_num')
+                        if entity_type_number == 116:
+                            e.add_section(data[8:16], 'line_weight_number')
+                            e.add_section(data[16:24], 'color_number')
+                            e.add_section(data[24:32], 'param_line_count')
+                            e.add_section(data[32:40], 'form_number')
+                            e.add_section(data[56:64], 'entity_label', type='string')
+                            e.add_section(data[64:72], 'entity_subs_num')
+
+                            entity_list.append(e)
+                            pointer_dict.update({e.sequence_number: entity_index})
+                            entity_index += 1
+                            print(pointer_dict)
 
                         first_dict_line = True
-                        entity_list.append(e)
-                        pointer_dict.update({e.sequence_number: entity_index})
-                        entity_index += 1
-                        print(pointer_dict)
+
                 elif id_code == 'P':  # Parameter data
                     for x in pointer_dict:
                         print(x)
@@ -104,7 +119,8 @@ class MaFenetre(QtWidgets.QMainWindow):
                         entity_list[pointer_dict[directory_pointer]]._add_parameters(parameters)
 
                 elif id_code == 'T':  # Terminate
-                    print(e.coordinate)
+                    for e in entity_list:
+                        print(e.coordinate)
 
 class Point():
     def __init__(self):
