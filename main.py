@@ -1,5 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from matplotlib import numpy as np
+import sys
 ##Fenetre utilisateur
 
 def parse_float(str_value):
@@ -16,6 +17,13 @@ def parse_float(str_value):
 class MaFenetre(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
+        self.boutonLire = QtWidgets.QPushButton("enter")
+
+        layout1 = QtWidgets.QGridLayout()
+        layout1.addWidget(self.boutonLire, 3, 2)
+        self.setLayout(layout1)
+
+        self.boutonLire.clicked.connect(self.read(filename="test.igs"))
 
     def read(self,filename):
         with open(filename, 'r') as f:
@@ -31,9 +39,10 @@ class MaFenetre(QtWidgets.QMainWindow):
 
             # for line in tqdm(f.readlines(), desc='Reading file'):
             for line in f.readlines():
+                print(line)
                 data = line[:80]
                 id_code = line[72]
-
+                print(id_code)
                 if id_code == 'S':  # Start
                     desc = line[:72].strip()
 
@@ -61,6 +70,8 @@ class MaFenetre(QtWidgets.QMainWindow):
                         e.add_section(data[65:72], 'status_number')
                         e.sequence_number = int(data[73:].strip())
 
+                        first_dict_line = False
+
                     else:
                         e.add_section(data[8:16], 'line_weight_number')
                         e.add_section(data[16:24], 'color_number')
@@ -73,12 +84,15 @@ class MaFenetre(QtWidgets.QMainWindow):
                         entity_list.append(e)
                         pointer_dict.update({e.sequence_number: entity_index})
                         entity_index += 1
-
+                        print(pointer_dict)
                 elif id_code == 'P':  # Parameter data
+                    for x in pointer_dict:
+                        print(x)
                         # Concatenate multiple lines into one string
                     if first_param_line:
                         param_string = data[:64]
                         directory_pointer = int(data[64:72].strip())
+                        print(directory_pointer)
                         first_param_line = False
                     else:
                         param_string += data[:64]
@@ -88,9 +102,9 @@ class MaFenetre(QtWidgets.QMainWindow):
                         param_string = param_string.strip()[:-1]
                         parameters = param_string.split(param_sep)
                         entity_list[pointer_dict[directory_pointer]]._add_parameters(parameters)
-                        print(e)
+
                 elif id_code == 'T':  # Terminate
-                    pass
+                    print(e.coordinate)
 
 class Point():
     def __init__(self):
@@ -142,3 +156,12 @@ class Point():
     def coordinate(self):
         """Coordinate of the point as a numpy array"""
         return np.array([self._x, self._y, self._z])
+
+
+
+app = QtWidgets.QApplication(sys.argv)
+
+window = MaFenetre()
+window.show()
+
+app.exec_()
