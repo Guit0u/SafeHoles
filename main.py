@@ -18,24 +18,27 @@ class MaFenetre(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
 
-        tabs = QtWidgets.QTabWidget()
-        tabs.setTabPosition(QtWidgets.QTabWidget.North)
-        tabs.setMovable(False)
-
         self.boutonLire = QtWidgets.QPushButton("enter")
+        self.boutonSecurite = QtWidgets.QPushButton("bloup")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("exemple.igs")
+        self.__champSecurite = QtWidgets.QLineEdit("")
+        self.__champSecurite.setPlaceholderText("42")
+        self.__unite = QtWidgets.QLabel("millimetri")
+
 
         layout1 = QtWidgets.QGridLayout()
-        layout1.addWidget(self.__champTexte,2,2)
-        layout1.addWidget(self.boutonLire, 3, 2)
+        layout1.addWidget(self.__champTexte,0,1)
+        layout1.addWidget(self.boutonLire, 1,1 )
+        layout1.addWidget(self.boutonSecurite,1,3)
+        layout1.addWidget(self.__champSecurite,0,2)
+        layout1.addWidget(self.__unite,0,3)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
-        tabs.addTab(widget1, "Inserire una fattura")
-        self.setCentralWidget(tabs)
+        self.setCentralWidget(widget1)
 
         self.boutonLire.clicked.connect(self.read)
-        #self.boutonLire.clicked.connect(self.read("test.igs"))
+        #self.boutonSecurite.clicked.connect(self.prof)
 
     def read(self):
         filename = self.__champTexte.text()
