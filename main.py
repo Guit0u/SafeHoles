@@ -15,6 +15,8 @@ def parse_float(str_value):
         return float(str_value.lower().replace("d", "e"))
 
 class MaFenetre(QtWidgets.QMainWindow):
+
+
     def __init__(self, parent=None):
         super().__init__()
 
@@ -35,7 +37,21 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout1.addWidget(self.__unite,0,3)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
+
         self.setCentralWidget(widget1)
+
+        layout2 = QtWidgets.QGridLayout()
+        self.boutonLire2 = QtWidgets.QPushButton("enter")
+        self.boutonSecurite2 = QtWidgets.QPushButton("bloup")
+        self.__champTexte2 = QtWidgets.QLineEdit("")
+        self.__champTexte2.setPlaceholderText("exemple.igs")
+        layout2.addWidget(self.__champTexte2, 0, 1)
+        layout2.addWidget(self.boutonLire2, 1, 1)
+        layout2.addWidget(self.boutonSecurite2, 1, 3)
+        layout2.addWidget(self.__champSecurite2, 0, 2)
+
+        self.widget2=QtWidgets.QWidget()
+        self.widget2.setLayout(layout2)
 
         self.boutonLire.clicked.connect(self.read)
         #self.boutonSecurite.clicked.connect(self.prof)
@@ -124,6 +140,12 @@ class MaFenetre(QtWidgets.QMainWindow):
                 elif id_code == 'T':  # Terminate
                     for e in entity_list:
                         print(e.coordinate)
+
+        self.setCentralWidget(self.widget2)
+
+    def FtoPayRespects(self):
+        pass
+
 
 class Point():
     def __init__(self):
