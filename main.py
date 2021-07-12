@@ -46,6 +46,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         widget1.setLayout(layout1)
 
         self.setCentralWidget(widget1)
+
+        '''
         layout2 = QtWidgets.QGridLayout()
 
         self.__number = QtWidgets.QLabel('1')
@@ -83,10 +85,45 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout3 = QtWidgets.QGridLayout()
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
+        '''
+
+        layout3 = QtWidgets.QGridLayout()
+        self.__file = QtWidgets.QLabel("file")
+        self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
+        self.boutonSchlong = QtWidgets.QPushButton("Schlong")
+        layout3.addWidget(self.__file,0,0)
+        layout3.addWidget(self.boutonFanuc,1,1)
+        layout3.addWidget(self.boutonSchlong, 2,2)
+
+        self.widget3 = QtWidgets.QWidget()
+        self.widget3.setLayout(layout3)
+
+        #self.setCentralWidget(self.widget3)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         self.boutonLire.clicked.connect(self.read)
-        self.boutonLire2.clicked.connect(self.FtoPayRespects)
+        #self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
+
 
 
     def read(self):
