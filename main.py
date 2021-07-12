@@ -41,14 +41,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.setCentralWidget(widget1)
 
         layout2 = QtWidgets.QGridLayout()
-        self.boutonLire2 = QtWidgets.QPushButton("enter")
-        self.boutonSecurite2 = QtWidgets.QPushButton("bloup")
+        self.boutonLire2 = QtWidgets.QPushButton("bjour")
+
         self.__champTexte2 = QtWidgets.QLineEdit("")
         self.__champTexte2.setPlaceholderText("exemple.igs")
+
+
         layout2.addWidget(self.__champTexte2, 0, 1)
         layout2.addWidget(self.boutonLire2, 1, 1)
-        layout2.addWidget(self.boutonSecurite2, 1, 3)
-        layout2.addWidget(self.__champSecurite2, 0, 2)
+
 
         self.widget2=QtWidgets.QWidget()
         self.widget2.setLayout(layout2)
