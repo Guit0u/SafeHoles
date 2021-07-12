@@ -22,13 +22,13 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.points=[]
         self.infopoints=[]
         self.compteur = 0
-        self.boutonLire = QtWidgets.QPushButton("enter")
-        self.boutonSecurite = QtWidgets.QPushButton("enter")
+        self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
-        self.__champTexte.setPlaceholderText("exemple.igs")
+        self.__champTexte.setPlaceholderText("esempio.igs")
+        self.__labelText = QtWidgets.QLabel("File")
         self.__champSecurite = QtWidgets.QLineEdit("")
         self.__champSecurite.setPlaceholderText("42")
-        self.__unite = QtWidgets.QLabel("millimetri")
+        self.__unite = QtWidgets.QLabel("Sicurezza (millimetri)")
         self.__error1 = QtWidgets.QLabel()
         self.__error11 = QtWidgets.QLabel()
         self.__error2 = QtWidgets.QLabel()
@@ -36,12 +36,12 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         layout1 = QtWidgets.QGridLayout()
         layout1.addWidget(self.__champTexte,0,1)
-        layout1.addWidget(self.boutonLire, 1,1 )
-        layout1.addWidget(self.boutonSecurite,1,3)
-        layout1.addWidget(self.__champSecurite,0,2)
-        layout1.addWidget(self.__unite,0,3)
-        layout1.addWidget(self.__error1,0,4)
-        layout1.addWidget(self.__error11,0,5)
+        layout1.addWidget(self.boutonLire, 4,1)
+        layout1.addWidget(self.__champSecurite,1,1)
+        layout1.addWidget(self.__unite,1,0)
+        layout1.addWidget(self.__error1,0,5)
+        layout1.addWidget(self.__error11,1,5)
+        layout1.addWidget(self.__labelText, 0,0)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
 
@@ -49,30 +49,32 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout2 = QtWidgets.QGridLayout()
 
         self.__number = QtWidgets.QLabel('1')
-        self.__trou = QtWidgets.QLabel('trou')
-        self.__coord = QtWidgets.QLabel('wsh')
-        self.boutonLire2 = QtWidgets.QPushButton("enter")
+        self.__trou = QtWidgets.QLabel('foro :')
+        self.__coord = QtWidgets.QLabel('')
+        self.__coord2 = QtWidgets.QLabel('coordinamento : ')
+        self.boutonLire2 = QtWidgets.QPushButton("entrata")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("5")
-        self.__labelProfondeur = QtWidgets.QLabel("Depth (mm) :")
+        self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champVitesse = QtWidgets.QLineEdit("")
         self.__champVitesse.setPlaceholderText("5")
-        self.__labelVitesse = QtWidgets.QLabel("Speed (mm/s) :")
+        self.__labelVitesse = QtWidgets.QLabel("Velocità (mm/s) :")
         self.__champRetrait = QtWidgets.QLineEdit("")
         self.__champRetrait.setPlaceholderText("5")
-        self.__labelRetrait = QtWidgets.QLabel("Depth (mm) :")
+        self.__labelRetrait = QtWidgets.QLabel("Profondità (mm) :")
 
-        layout2.addWidget(self.__champProfondeur, 0, 1)
-        layout2.addWidget(self.__labelProfondeur,0,0)
-        layout2.addWidget(self.__champVitesse,1,1)
-        layout2.addWidget(self.__labelVitesse,1,0)
-        layout2.addWidget(self.__champRetrait, 2, 1)
-        layout2.addWidget(self.__labelRetrait, 2, 0)
-        layout2.addWidget(self.boutonLire2, 2, 5)
-        layout2.addWidget(self.__number, 0, 4)
-        layout2.addWidget(self.__trou, 0, 3)
-        layout2.addWidget(self.__coord, 0, 5)
-        layout2.addWidget(self.__error2, 5, 5)
+        layout2.addWidget(self.__champProfondeur, 1, 1)
+        layout2.addWidget(self.__labelProfondeur,1,0)
+        layout2.addWidget(self.__champVitesse,2,1)
+        layout2.addWidget(self.__labelVitesse,2,0)
+        layout2.addWidget(self.__champRetrait, 3, 1)
+        layout2.addWidget(self.__labelRetrait, 3, 0)
+        layout2.addWidget(self.boutonLire2, 4, 0)
+        layout2.addWidget(self.__number, 0, 1)
+        layout2.addWidget(self.__trou, 0, 0)
+        layout2.addWidget(self.__coord2, 0, 3)
+        layout2.addWidget(self.__coord, 0, 4)
+        layout2.addWidget(self.__error2, 4, 4)
 
 
         self.widget2=QtWidgets.QWidget()
@@ -88,15 +90,17 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
     def read(self):
+        self.__error1.clear()
+        self.__error11.clear()
         filename = self.__champTexte.text()
+
         security=self.__champSecurite.text()
         if ',' in security:
             security = float(security.replace(',', '.'))
         try:
             security = float(security)
         except ValueError:
-            print('wsh t nul')
-            self.__error11.setText('wsh t nul')
+            self.__error11.setText('input deve essere un valore numerico')
             self.__champSecurite.clear()
             return
 
@@ -111,12 +115,9 @@ class MaFenetre(QtWidgets.QMainWindow):
                 global_string = ""
                 pointer_dict = {}
 
-                # for line in tqdm(f.readlines(), desc='Reading file'):
                 for line in f.readlines():
-                    print(line)
                     data = line[:80]
                     id_code = line[72]
-                    print(id_code)
                     if id_code == 'S':  # Start
                         desc = line[:72].strip()
 
@@ -157,18 +158,16 @@ class MaFenetre(QtWidgets.QMainWindow):
                                 self.points.append(e)
                                 pointer_dict.update({e.sequence_number: entity_index})
                                 entity_index += 1
-                                print(pointer_dict)
 
                             first_dict_line = True
 
                     elif id_code == 'P':  # Parameter data
                         for x in pointer_dict:
-                            print(x)
+                            print()
                             # Concatenate multiple lines into one string
                         if first_param_line:
                             param_string = data[:64]
                             directory_pointer = int(data[64:72].strip())
-                            print(directory_pointer)
                             first_param_line = False
                         else:
                             param_string += data[:64]
@@ -187,7 +186,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.setCentralWidget(self.widget2)
             self.__coord.setText(str(self.points[0].coordinate))
         except FileNotFoundError:
-            self.__error1.setText('wsh pas fichier')
+            self.__error1.setText('Il file non esiste')
             self.__champTexte.clear()
             return
 
@@ -207,8 +206,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     info2=float(info2.replace(',', '.'))
                     info3=float(info3.replace(',', '.'))
                 except ValueError:
-                    print('wsh t nul')
-                    self.__error2.setText('wsh t nul')
+                    self.__error2.setText('input deve essere un valore numerico')
                     self.__champProfondeur.clear()
                     self.__champVitesse.clear()
                     self.__champRetrait.clear()
@@ -219,8 +217,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 info2 = float(info2)
                 info3 = float(info3)
             except ValueError:
-                print('wsh t nul')
-                self.__error2.setText('wsh t nul')
+                self.__error2.setText('input deve essere un valore numerico')
                 self.__champProfondeur.clear()
                 self.__champVitesse.clear()
                 self.__champRetrait.clear()
@@ -233,7 +230,6 @@ class MaFenetre(QtWidgets.QMainWindow):
             if self.compteur<len(self.points):
                 self.__number.setText(str(self.compteur+1))
                 self.__coord.setText(str(self.points[self.compteur].coordinate))
-            print(self.infopoints)
             if self.compteur==len(self.points):
                 self.setCentralWidget(self.widget3)
 
