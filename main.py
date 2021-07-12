@@ -29,6 +29,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champSecurite = QtWidgets.QLineEdit("")
         self.__champSecurite.setPlaceholderText("42")
         self.__unite = QtWidgets.QLabel("millimetri")
+        self.__error1 = QtWidgets.QLabel()
+        self.__error11 = QtWidgets.QLabel()
+        self.__error2 = QtWidgets.QLabel()
 
 
         layout1 = QtWidgets.QGridLayout()
@@ -37,6 +40,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout1.addWidget(self.boutonSecurite,1,3)
         layout1.addWidget(self.__champSecurite,0,2)
         layout1.addWidget(self.__unite,0,3)
+        layout1.addWidget(self.__error1,0,4)
+        layout1.addWidget(self.__error11,0,5)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
 
@@ -62,6 +67,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout2.addWidget(self.__number, 0, 4)
         layout2.addWidget(self.__trou, 0, 3)
         layout2.addWidget(self.__coord, 0, 5)
+        layout2.addWidget(self.__error2, 5, 5)
 
 
         self.widget2=QtWidgets.QWidget()
@@ -78,91 +84,107 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def read(self):
         filename = self.__champTexte.text()
-        with open(filename,'r') as f:
+        security=self.__champSecurite.text()
+        if ',' in security:
+            security = float(security.replace(',', '.'))
+        try:
+            security = float(security)
+        except ValueError:
+            print('wsh t nul')
+            self.__error11.setText('wsh t nul')
+            self.__champSecurite.clear()
+            return
 
-            param_string = ''
-            entity_index = 0
-            first_dict_line = True
-            first_global_line = True
-            first_param_line = True
-            global_string = ""
-            pointer_dict = {}
+        try:
+            with open(filename,'r') as f:
 
-            # for line in tqdm(f.readlines(), desc='Reading file'):
-            for line in f.readlines():
-                print(line)
-                data = line[:80]
-                id_code = line[72]
-                print(id_code)
-                if id_code == 'S':  # Start
-                    desc = line[:72].strip()
+                param_string = ''
+                entity_index = 0
+                first_dict_line = True
+                first_global_line = True
+                first_param_line = True
+                global_string = ""
+                pointer_dict = {}
 
-                elif id_code == 'G':  # Global
-                    global_string += data  # Consolidate all global lines
-                    if first_global_line:
-                        param_sep = data[2]
-                        record_sep = data[6]
-                        first_global_line = False
+                # for line in tqdm(f.readlines(), desc='Reading file'):
+                for line in f.readlines():
+                    print(line)
+                    data = line[:80]
+                    id_code = line[72]
+                    print(id_code)
+                    if id_code == 'S':  # Start
+                        desc = line[:72].strip()
 
-                elif id_code == 'D':  # Directory entry
-                    if first_dict_line:
-                        entity_type_number = int(data[0:8].strip())
-                        if entity_type_number == 116:  # Point
-                            e = Point()
-                            e.add_section(data[0:8], 'entity_type_number')
-                            e.add_section(data[8:16], 'parameter_pointer')
-                            e.add_section(data[16:24], 'structure')
-                            e.add_section(data[24:32], 'line_font_pattern')
-                            e.add_section(data[32:40], 'level')
-                            e.add_section(data[40:48], 'view')
-                            e.add_section(data[48:56], 'transform')
-                            e.add_section(data[56:65], 'label_assoc')
-                            e.add_section(data[65:72], 'status_number')
-                            e.sequence_number = int(data[73:].strip())
+                    elif id_code == 'G':  # Global
+                        global_string += data  # Consolidate all global lines
+                        if first_global_line:
+                            param_sep = data[2]
+                            record_sep = data[6]
+                            first_global_line = False
 
-                        first_dict_line = False
+                    elif id_code == 'D':  # Directory entry
+                        if first_dict_line:
+                            entity_type_number = int(data[0:8].strip())
+                            if entity_type_number == 116:  # Point
+                                e = Point()
+                                e.add_section(data[0:8], 'entity_type_number')
+                                e.add_section(data[8:16], 'parameter_pointer')
+                                e.add_section(data[16:24], 'structure')
+                                e.add_section(data[24:32], 'line_font_pattern')
+                                e.add_section(data[32:40], 'level')
+                                e.add_section(data[40:48], 'view')
+                                e.add_section(data[48:56], 'transform')
+                                e.add_section(data[56:65], 'label_assoc')
+                                e.add_section(data[65:72], 'status_number')
+                                e.sequence_number = int(data[73:].strip())
 
-                    else:
-                        if entity_type_number == 116:
-                            e.add_section(data[8:16], 'line_weight_number')
-                            e.add_section(data[16:24], 'color_number')
-                            e.add_section(data[24:32], 'param_line_count')
-                            e.add_section(data[32:40], 'form_number')
-                            e.add_section(data[56:64], 'entity_label', type='string')
-                            e.add_section(data[64:72], 'entity_subs_num')
+                            first_dict_line = False
 
-                            self.points.append(e)
-                            pointer_dict.update({e.sequence_number: entity_index})
-                            entity_index += 1
-                            print(pointer_dict)
+                        else:
+                            if entity_type_number == 116:
+                                e.add_section(data[8:16], 'line_weight_number')
+                                e.add_section(data[16:24], 'color_number')
+                                e.add_section(data[24:32], 'param_line_count')
+                                e.add_section(data[32:40], 'form_number')
+                                e.add_section(data[56:64], 'entity_label', type='string')
+                                e.add_section(data[64:72], 'entity_subs_num')
 
-                        first_dict_line = True
+                                self.points.append(e)
+                                pointer_dict.update({e.sequence_number: entity_index})
+                                entity_index += 1
+                                print(pointer_dict)
 
-                elif id_code == 'P':  # Parameter data
-                    for x in pointer_dict:
-                        print(x)
-                        # Concatenate multiple lines into one string
-                    if first_param_line:
-                        param_string = data[:64]
-                        directory_pointer = int(data[64:72].strip())
-                        print(directory_pointer)
-                        first_param_line = False
-                    else:
-                        param_string += data[:64]
+                            first_dict_line = True
 
-                    if param_string.strip()[-1] == record_sep:
-                        first_param_line = True
-                        param_string = param_string.strip()[:-1]
-                        parameters = param_string.split(param_sep)
-                        self.points[pointer_dict[directory_pointer]]._add_parameters(parameters)
+                    elif id_code == 'P':  # Parameter data
+                        for x in pointer_dict:
+                            print(x)
+                            # Concatenate multiple lines into one string
+                        if first_param_line:
+                            param_string = data[:64]
+                            directory_pointer = int(data[64:72].strip())
+                            print(directory_pointer)
+                            first_param_line = False
+                        else:
+                            param_string += data[:64]
 
-                elif id_code == 'T':  # Terminate
-                    for e in self.points:
-                        print()
+                        if param_string.strip()[-1] == record_sep:
+                            first_param_line = True
+                            param_string = param_string.strip()[:-1]
+                            parameters = param_string.split(param_sep)
+                            self.points[pointer_dict[directory_pointer]]._add_parameters(parameters)
+
+                    elif id_code == 'T':  # Terminate
+                        for e in self.points:
+                            print()
 
 
-        self.setCentralWidget(self.widget2)
-        self.__coord.setText(str(self.points[0].coordinate))
+            self.setCentralWidget(self.widget2)
+            self.__coord.setText(str(self.points[0].coordinate))
+        except FileNotFoundError:
+            self.__error1.setText('wsh pas fichier')
+            self.__champTexte.clear()
+            return
 
 
 
@@ -171,8 +193,18 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         if self.compteur<len(self.points):
             self.compteur += 1
-            info = self.__champTexte2.text()
-            self.__champTexte2.clear()
+            info = self.__champProfondeur.text()
+            if ',' in info:
+                info=float(info.replace(',', '.'))
+            try:
+                info=float(info)
+            except ValueError:
+                print('wsh t nul')
+                self.__error2.setText('wsh t nul')
+                self.__champProfondeur.clear()
+                self.compteur-=1
+                return
+            self.__champProfondeur.clear()
             self.infopoints.append(info)
             if self.compteur<len(self.points):
                 self.__number.setText(str(self.compteur+1))
