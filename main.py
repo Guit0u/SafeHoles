@@ -51,19 +51,24 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__number = QtWidgets.QLabel('1')
         self.__trou = QtWidgets.QLabel('trou')
         self.__coord = QtWidgets.QLabel('wsh')
-        self.boutonLire2 = QtWidgets.QPushButton("oui")
+        self.boutonLire2 = QtWidgets.QPushButton("enter")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("5")
         self.__labelProfondeur = QtWidgets.QLabel("Depth (mm) :")
         self.__champVitesse = QtWidgets.QLineEdit("")
         self.__champVitesse.setPlaceholderText("5")
         self.__labelVitesse = QtWidgets.QLabel("Speed (mm/s) :")
+        self.__champRetrait = QtWidgets.QLineEdit("")
+        self.__champRetrait.setPlaceholderText("5")
+        self.__labelRetrait = QtWidgets.QLabel("Depth (mm) :")
 
         layout2.addWidget(self.__champProfondeur, 0, 1)
         layout2.addWidget(self.__labelProfondeur,0,0)
         layout2.addWidget(self.__champVitesse,1,1)
         layout2.addWidget(self.__labelVitesse,1,0)
-        layout2.addWidget(self.boutonLire2, 2, 1)
+        layout2.addWidget(self.__champRetrait, 2, 1)
+        layout2.addWidget(self.__labelRetrait, 2, 0)
+        layout2.addWidget(self.boutonLire2, 2, 5)
         layout2.addWidget(self.__number, 0, 4)
         layout2.addWidget(self.__trou, 0, 3)
         layout2.addWidget(self.__coord, 0, 5)
@@ -194,18 +199,37 @@ class MaFenetre(QtWidgets.QMainWindow):
         if self.compteur<len(self.points):
             self.compteur += 1
             info = self.__champProfondeur.text()
-            if ',' in info:
-                info=float(info.replace(',', '.'))
+            info2 = self.__champVitesse.text()
+            info3 = self.__champRetrait.text()
+            if ',' in info or ',' in info2 or ',' in info3:
+                try:
+                    info=float(info.replace(',', '.'))
+                    info2=float(info2.replace(',', '.'))
+                    info3=float(info3.replace(',', '.'))
+                except ValueError:
+                    print('wsh t nul')
+                    self.__error2.setText('wsh t nul')
+                    self.__champProfondeur.clear()
+                    self.__champVitesse.clear()
+                    self.__champRetrait.clear()
+                    self.compteur -= 1
+                    return
             try:
                 info=float(info)
+                info2 = float(info2)
+                info3 = float(info3)
             except ValueError:
                 print('wsh t nul')
                 self.__error2.setText('wsh t nul')
                 self.__champProfondeur.clear()
+                self.__champVitesse.clear()
+                self.__champRetrait.clear()
                 self.compteur-=1
                 return
             self.__champProfondeur.clear()
-            self.infopoints.append(info)
+            self.__champVitesse.clear()
+            self.__champRetrait.clear()
+            self.infopoints.append([info,info2,info3])
             if self.compteur<len(self.points):
                 self.__number.setText(str(self.compteur+1))
                 self.__coord.setText(str(self.points[self.compteur].coordinate))
