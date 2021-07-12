@@ -43,12 +43,18 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout2 = QtWidgets.QGridLayout()
         self.boutonLire2 = QtWidgets.QPushButton("bjour")
 
-        self.__champTexte2 = QtWidgets.QLineEdit("")
-        self.__champTexte2.setPlaceholderText("exemple.igs")
+        self.__champProfondeur = QtWidgets.QLineEdit("")
+        self.__labelProfondeur = QtWidgets.QLabel("Depth (mm)")
+        self.__champProfondeur.setPlaceholderText("500")
+        self.__champVitesse = QtWidgets.QLineEdit("")
+        self.__champVitesse.setPlaceholderText("2")
+        self.__labelVitesse = QtWidgets.QLabel("Speed (mm/s)")
 
-
-        layout2.addWidget(self.__champTexte2, 0, 1)
-        layout2.addWidget(self.boutonLire2, 1, 1)
+        layout2.addWidget(self.__champProfondeur, 0, 1)
+        layout2.addWidget(self.__champVitesse,1,1)
+        layout2.addWidget(self.__labelProfondeur,0,0)
+        layout2.addWidget(self.__labelVitesse,1,0)
+        layout2.addWidget(self.boutonLire2, 1, 2)
 
 
         self.widget2=QtWidgets.QWidget()
