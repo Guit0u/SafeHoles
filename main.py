@@ -19,9 +19,11 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__()
-
+        self.points=[]
+        self.infopoints=[]
+        self.compteur = 0
         self.boutonLire = QtWidgets.QPushButton("enter")
-        self.boutonSecurite = QtWidgets.QPushButton("bloup")
+        self.boutonSecurite = QtWidgets.QPushButton("enter")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("exemple.igs")
         self.__champSecurite = QtWidgets.QLineEdit("")
@@ -39,29 +41,40 @@ class MaFenetre(QtWidgets.QMainWindow):
         widget1.setLayout(layout1)
 
         self.setCentralWidget(widget1)
-
         layout2 = QtWidgets.QGridLayout()
-        self.boutonLire2 = QtWidgets.QPushButton("enter")
-        self.boutonSecurite2 = QtWidgets.QPushButton("bloup")
+
+        self.__number = QtWidgets.QLabel('1')
+        self.__trou = QtWidgets.QLabel('trou')
+        self.__coord = QtWidgets.QLabel('wsh')
+        self.boutonLire2 = QtWidgets.QPushButton("oui")
+        self.boutonSecurite2 = QtWidgets.QPushButton("reeeeeeeeeee")
         self.__champTexte2 = QtWidgets.QLineEdit("")
         self.__champTexte2.setPlaceholderText("exemple.igs")
         layout2.addWidget(self.__champTexte2, 0, 1)
         layout2.addWidget(self.boutonLire2, 1, 1)
         layout2.addWidget(self.boutonSecurite2, 1, 3)
-        layout2.addWidget(self.__champSecurite2, 0, 2)
+        layout2.addWidget(self.__number, 0, 4)
+        layout2.addWidget(self.__trou, 0, 3)
+        layout2.addWidget(self.__coord, 0, 5)
+
 
         self.widget2=QtWidgets.QWidget()
         self.widget2.setLayout(layout2)
 
+        layout3 = QtWidgets.QGridLayout()
+        self.widget3 = QtWidgets.QWidget()
+        self.widget3.setLayout(layout3)
+
         self.boutonLire.clicked.connect(self.read)
+        self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
+
 
     def read(self):
         filename = self.__champTexte.text()
-        with open(filename, 'r') as f:
+        with open(filename,'r') as f:
 
             param_string = ''
-            entity_list = []
             entity_index = 0
             first_dict_line = True
             first_global_line = True
@@ -112,7 +125,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                             e.add_section(data[56:64], 'entity_label', type='string')
                             e.add_section(data[64:72], 'entity_subs_num')
 
-                            entity_list.append(e)
+                            self.points.append(e)
                             pointer_dict.update({e.sequence_number: entity_index})
                             entity_index += 1
                             print(pointer_dict)
@@ -135,16 +148,35 @@ class MaFenetre(QtWidgets.QMainWindow):
                         first_param_line = True
                         param_string = param_string.strip()[:-1]
                         parameters = param_string.split(param_sep)
-                        entity_list[pointer_dict[directory_pointer]]._add_parameters(parameters)
+                        self.points[pointer_dict[directory_pointer]]._add_parameters(parameters)
 
                 elif id_code == 'T':  # Terminate
-                    for e in entity_list:
-                        print(e.coordinate)
+                    for e in self.points:
+                        print()
+
 
         self.setCentralWidget(self.widget2)
+        self.__coord.setText(str(self.points[0].coordinate))
+
+
+
 
     def FtoPayRespects(self):
-        pass
+
+        if self.compteur<len(self.points):
+            self.compteur += 1
+            info = self.__champTexte2.text()
+            self.__champTexte2.clear()
+            self.infopoints.append(info)
+            if self.compteur<len(self.points):
+                self.__number.setText(str(self.compteur+1))
+                self.__coord.setText(str(self.points[self.compteur].coordinate))
+            print(self.infopoints)
+            if self.compteur==len(self.points):
+                self.setCentralWidget(self.widget3)
+
+
+
 
 
 class Point():
