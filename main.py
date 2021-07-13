@@ -44,10 +44,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout1 = QtWidgets.QGridLayout()
         layout1.addWidget(self.__champTexte,0,1)
         #layout1.addWidget(self.boutonLire, 4,1)
-        layout1.addWidget(self.__champSecurite,1,1)
-        layout1.addWidget(self.__unite,1,0)
+        #layout1.addWidget(self.__champSecurite,1,1)
+        #layout1.addWidget(self.__unite,1,0)
         layout1.addWidget(self.__error1,0,5)
-        layout1.addWidget(self.__error11,1,5)
+        #layout1.addWidget(self.__error11,1,5)
         layout1.addWidget(self.__labelText, 0,0)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
@@ -171,6 +171,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             return True
         else:
             self.__GxxInput.clear()
+            self.__error4.setText('T mosh')
             print('t mosh')
             return False
 
@@ -178,24 +179,17 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def foraturia(self):
 
-        print('yes')
-        self.testGxx()
+
+        if not (self.testGxx()):
+            print('bonjour')
+            return
         self.setCentralWidget(self.widget4)
 
-
-
-
-
-
     def fillettatura(self):
-
         print('no')
-        self.testGxx()
+        if not self.testGxx():
+            return
         self.setCentralWidget(self.widget5)
-
-
-
-
 
     def fanuc(self):
         self.Fanuc=True
