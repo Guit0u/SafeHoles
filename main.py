@@ -146,12 +146,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champProfondeur4.setPlaceholderText("42")
         layout4.addWidget(self.__labelProfondeur4, 3, 0)
         layout4.addWidget(self.__champProfondeur4, 3, 1)
-        self.__R4 = QtWidgets.QLabel("R (?) :")
+        self.__R4 = QtWidgets.QLabel("quota di avvicimento (mm) :")
         self.__champR4 = QtWidgets.QLineEdit("")
         self.__champR4.setPlaceholderText("42")
         layout4.addWidget(self.__champR4, 4, 1)
         layout4.addWidget(self.__R4, 4, 0)
-        self.__Q4 = QtWidgets.QLabel("Q (?) :")
+        self.__Q4 = QtWidgets.QLabel("Q (mm) :")
         self.__champQ4 = QtWidgets.QLineEdit("")
         self.__champQ4.setPlaceholderText("42")
         layout4.addWidget(self.__Q4, 5, 0)
@@ -164,7 +164,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         ##layout 5 : pour les fillatura
         layout5 = QtWidgets.QGridLayout()
         self.__securite5 = QtWidgets.QLabel('z di sicurezza')
-        layout5.addWidget(self.__securite5, 0, 0)
+        layout5.addWidget(self.__securite5, 1, 0)
         self.__champSecurite5 = QtWidgets.QLineEdit("")
         self.__champSecurite5.setPlaceholderText("42")
         layout5.addWidget(self.__champSecurite5, 1, 1)
@@ -178,19 +178,19 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.combo.addItem('M14')
         self.combo.addItem('M16')
         self.combo.addItem('M20')
-        layout5.addWidget(self.combo)
+        layout5.addWidget(self.combo,0,1)
 
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("42")
         layout5.addWidget(self.__labelProfondeur, 4, 0)
         layout5.addWidget(self.__champProfondeur, 4, 1)
-        self.__R = QtWidgets.QLabel("R (?) :")
+        self.__R = QtWidgets.QLabel("quota di avvicimento (mm) :")
         self.__champR = QtWidgets.QLineEdit("")
         self.__champR.setPlaceholderText("42")
         layout5.addWidget(self.__champR, 5, 1)
         layout5.addWidget(self.__R, 5, 0)
-        self.__Q = QtWidgets.QLabel("Q (?) :")
+        self.__Q = QtWidgets.QLabel("Q (mm) :")
         self.__champQ = QtWidgets.QLineEdit("")
         self.__champQ.setPlaceholderText("42")
         layout5.addWidget(self.__Q, 6, 0)
@@ -200,21 +200,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout5.addWidget(self.__error5, 1, 5)
 
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
-        layout5.addWidget(self.boutonEntrata5, 4, 4)
+        layout5.addWidget(self.boutonEntrata5, 7, 1)
 
         self.widget5 = QtWidgets.QWidget()
         self.widget5.setLayout(layout5)
-
-
-
-
-
-
-
-
-
-
-
 
         ##appel de fonction
 
@@ -246,8 +235,6 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
     def foraturia(self):
-
-
         if not (self.testGxx()):
             print('bonjour')
             return
@@ -360,8 +347,6 @@ class MaFenetre(QtWidgets.QMainWindow):
             return
 
 
-
-
     def FtoPayRespects(self):
 
         if self.compteur<len(self.points):
@@ -413,29 +398,41 @@ class MaFenetre(QtWidgets.QMainWindow):
         new.write('G0 '+self.Securite+'\n')
         new.write('G98\n')
         for point in self.points:
-            new.write(self.Gxx+'X'+str(int(point.x))+'Y'+str(int(point.y))+self.Profondeur+self.Rxx+self.Qxx+self.Fxx+'\n')
+            new.write(self.Gxx + 'X' + str(int(point.x)) + 'Y' + str(
+                int(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
-        if(self.Fanuc):
+        if (self.Fanuc):
             new.write('\n%')
 
     def writefo(self):
         self.__error4.clear()
 
         security = self.__champSecurite4.text()
-        if ',' in security:
+        speed= self.__SxxInput.text()
+        avanzamento=self.__FxxInput.text()
+        profondeur=self.__champProfondeur4.text()
+        r=self.__champR4.text()
+        q=self.__champQ4.text()
+        verif=[security,speed,avanzamento,profondeur,r,q]
+
+        for element in verif:
             try:
-                security = float(security.replace(',',  '.'))
+                element = int(element)
             except ValueError:
                 self.__error4.setText('input deve essere un valore numerico')
-                self.__champSecurite4.clear()
                 return
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error4.setText('input deve essere un valore numerico')
-            self.__champSecurite4.clear()
-            return
         self.Securite = 'Z' + str(security)
+        self.Sxx = 'S' + str(speed)
+        self.Fxx = 'F' + str(avanzamento)
+        self.Profondeur = 'Z-' + str(profondeur)
+        self.Qxx = 'Q' + str(q)
+        self.Rxx = 'R' + str(r)
+        print(self.Securite,self.Sxx,self.Fxx,self.Profondeur, self.Qxx,self.Rxx)
+
+
+
+
+
         self.write()
 
     def writefi(self):
@@ -444,21 +441,27 @@ class MaFenetre(QtWidgets.QMainWindow):
         print(self.Mx)
 
         security = self.__champSecurite5.text()
-        if ',' in security:
+        speed = self.__SxxInput.text()
+        avanzamento = self.__FxxInput.text()
+        profondeur = self.__champProfondeur.text()
+        r = self.__champR.text()
+        q = self.__champQ.text()
+        verif = [security, speed, avanzamento, profondeur, r, q]
+
+        for element in verif:
             try:
-                security = float(security.replace(',', '.'))
+                element = int(element)
             except ValueError:
                 self.__error5.setText('input deve essere un valore numerico')
-                self.__champSecurite5.clear()
                 return
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error5.setText('input deve essere un valore numerico')
-            self.__champSecurite5.clear()
-            return
 
         self.Securite = 'Z' + str(security)
+        self.Sxx = 'S' + str(speed)
+        self.Fxx = 'F' + str(avanzamento)
+        self.Profondeur = 'Z-' + str(profondeur)
+        self.Qxx = 'Q' + str(q)
+        self.Rxx = 'R' + str(r)
+        print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
 
         if self.Mx=='M5':
             self.Sxx = 'S50'
