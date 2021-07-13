@@ -440,29 +440,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Mx = self.combo.currentText()
         print(self.Mx)
 
-        security = self.__champSecurite5.text()
-        speed = self.__SxxInput.text()
-        avanzamento = self.__FxxInput.text()
-        profondeur = self.__champProfondeur.text()
-        r = self.__champR.text()
-        q = self.__champQ.text()
-        verif = [security, speed, avanzamento, profondeur, r, q]
-
-        for element in verif:
-            try:
-                element = int(element)
-            except ValueError:
-                self.__error5.setText('input deve essere un valore numerico')
-                return
-
-        self.Securite = 'Z' + str(security)
-        self.Sxx = 'S' + str(speed)
-        self.Fxx = 'F' + str(avanzamento)
-        self.Profondeur = 'Z-' + str(profondeur)
-        self.Qxx = 'Q' + str(q)
-        self.Rxx = 'R' + str(r)
-        print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
-
         if self.Mx=='M5':
             self.Sxx = 'S50'
             self.Fxx = 'F40'
@@ -486,6 +463,27 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.Fxx = 'F125'
         else:
             return
+
+        security = self.__champSecurite5.text()
+        profondeur = self.__champProfondeur.text()
+        r = self.__champR.text()
+        q = self.__champQ.text()
+        verif = [security, profondeur, r, q]
+
+        for element in verif:
+            try:
+                element = int(element)
+            except ValueError:
+                self.__error5.setText('input deve essere un valore numerico')
+                return
+
+        self.Securite = 'Z' + str(security)
+        self.Profondeur = 'Z-' + str(profondeur)
+        self.Qxx = 'Q' + str(q)
+        self.Rxx = 'R' + str(r)
+        print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
+
+
 
         self.write()
 
