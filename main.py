@@ -22,6 +22,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.points=[]
         self.infopoints=[]
         self.compteur = 0
+
         self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("esempio.igs")
@@ -270,7 +271,14 @@ class MaFenetre(QtWidgets.QMainWindow):
             if self.compteur==len(self.points):
                 self.setCentralWidget(self.widget3)
 
-
+    def write(self):
+        if self.fanuc:
+            new = open('O0001', 'w')
+            new.write('%\nO0001')
+        else:
+            new = open('1.PRG', 'w')
+        for x in self.points:
+            new.write(x)
 
 
 
