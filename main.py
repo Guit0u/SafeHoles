@@ -19,10 +19,20 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__()
+
+        ##variables globales à la con
         self.points=[]
         self.infopoints=[]
         self.compteur = 0
-        self.boutonLire = QtWidgets.QPushButton("entrata")
+        self.Fanuc=False
+
+
+
+
+
+
+        ##layout1
+        #self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("esempio.igs")
         self.__labelText = QtWidgets.QLabel("File")
@@ -36,7 +46,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         layout1 = QtWidgets.QGridLayout()
         layout1.addWidget(self.__champTexte,0,1)
-        layout1.addWidget(self.boutonLire, 4,1)
+        #layout1.addWidget(self.boutonLire, 4,1)
         layout1.addWidget(self.__champSecurite,1,1)
         layout1.addWidget(self.__unite,1,0)
         layout1.addWidget(self.__error1,0,5)
@@ -45,8 +55,14 @@ class MaFenetre(QtWidgets.QMainWindow):
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
 
+        self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
+        self.boutonSchlong = QtWidgets.QPushButton("Schlong")
+        layout1.addWidget(self.boutonFanuc, 3, 2)
+        layout1.addWidget(self.boutonSchlong, 3, 1)
+
         self.setCentralWidget(widget1)
 
+        ##layout2
         '''
         layout2 = QtWidgets.QGridLayout()
 
@@ -81,19 +97,17 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.widget2=QtWidgets.QWidget()
         self.widget2.setLayout(layout2)
+        '''
 
         layout3 = QtWidgets.QGridLayout()
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
-        '''
+
+
+        ##layout3
 
         layout3 = QtWidgets.QGridLayout()
-        self.__file = QtWidgets.QLabel("file")
-        self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
-        self.boutonSchlong = QtWidgets.QPushButton("Schlong")
-        layout3.addWidget(self.__file,0,0)
-        layout3.addWidget(self.boutonFanuc,1,1)
-        layout3.addWidget(self.boutonSchlong, 2,2)
+
 
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
@@ -116,14 +130,20 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
 
+        ##appel de fonction
 
-
-
-
-        self.boutonLire.clicked.connect(self.read)
+        self.boutonFanuc.clicked.connect(self.fanuc)
+        self.boutonSchlong.clicked.connect(self.read)
+        #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
 
+
+    ##les fonctions
+
+    def fanuc(self):
+        self.Fanuc=True
+        self.read()
 
 
     def read(self):
@@ -220,7 +240,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                             print()
 
 
-            self.setCentralWidget(self.widget2)
+            #self.setCentralWidget(self.widget2)
             self.__coord.setText(str(self.points[0].coordinate))
         except FileNotFoundError:
             self.__error1.setText('Il file non esiste')
