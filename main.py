@@ -356,8 +356,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__error4.clear()
 
         security = self.__champSecurite4.text()
-        self.Mx = self.combo.currentText()
-        print(self.Mx)
         if ',' in security:
             try:
                 security = float(security.replace(',', '.'))
@@ -371,12 +369,11 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error4.setText('input deve essere un valore numerico')
             self.__champSecurite4.clear()
             return
-        self.Mx = self.combo.currentText()
-        print(self.Mx)
 
     def writefi(self):
         self.__error5.clear()
-
+        self.Mx = self.combo.currentText()
+        print(self.Mx)
         security = self.__champSecurite5.text()
         if ',' in security:
             try:
