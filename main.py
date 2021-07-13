@@ -115,6 +115,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout4 = QtWidgets.QGridLayout()
         self.__champSecurite4 = QtWidgets.QLineEdit("")
         layout4.addWidget(self.__champSecurite4, 1, 1)
+        self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
+        layout4.addWidget(self.boutonEntrata4, 4, 0)
+
 
         self.__error4 = QtWidgets.QLabel()
         layout4.addWidget(self.__error4,1,5)
@@ -128,6 +131,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout5.addWidget(self.__champSecurite5, 1, 1)
         self.__error5 = QtWidgets.QLabel()
         layout5.addWidget(self.__error5, 1, 5)
+        self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
+        layout5.addWidget(self.boutonEntrata5, 4, 0)
 
         self.widget5 = QtWidgets.QWidget()
         self.widget5.setLayout(layout5)
@@ -149,6 +154,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.boutonSchlong.clicked.connect(self.read)
         self.boutonFillettatura.clicked.connect(self.fillettatura)
         self.boutonForaturia.clicked.connect(self.foraturia)
+        self.boutonEntrata5.clicked.connect(self.writefi)
+        self.boutonEntrata4.clicked.connect(self.writefo)
         #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
@@ -170,40 +177,24 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
     def foraturia(self):
-        self.setCentralWidget(self.widget4)
+
         print('yes')
         self.testGxx()
-        self.__error4.clear()
+        self.setCentralWidget(self.widget4)
 
-        security = self.__champSecurite4.text()
-        if ',' in security:
-            security = float(security.replace(',', '.'))
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error4.setText('input deve essere un valore numerico')
-            self.__champSecurite4.clear()
-            return
+
+
 
 
 
     def fillettatura(self):
-        self.setCentralWidget(self.widget5)
+
         print('no')
         self.testGxx()
-        self.__error5.clear()
+        self.setCentralWidget(self.widget5)
 
 
 
-        security = self.__champSecurite5.text()
-        if ',' in security:
-            security = float(security.replace(',', '.'))
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error5.setText('input deve essere un valore numerico')
-            self.__champSecurite5.clear()
-            return
 
 
     def fanuc(self):
@@ -353,6 +344,29 @@ class MaFenetre(QtWidgets.QMainWindow):
         for x in self.points:
             new.write(str(x.x))
 
+    def writefi(self):
+        self.__error4.clear()
+        security = self.__champSecurite4.text()
+        if ',' in security:
+            security = float(security.replace(',', '.'))
+        try:
+            security = float(security)
+        except ValueError:
+            self.__error4.setText('input deve essere un valore numerico')
+            self.__champSecurite4.clear()
+            return
+
+    def writefo(self):
+        self.__error5.clear()
+        security = self.__champSecurite5.text()
+        if ',' in security:
+            security = float(security.replace(',', '.'))
+        try:
+            security = float(security)
+        except ValueError:
+            self.__error5.setText('input deve essere un valore numerico')
+            self.__champSecurite5.clear()
+            return
 
 class Point():
     def __init__(self):
