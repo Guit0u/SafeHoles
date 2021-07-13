@@ -99,15 +99,14 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget2.setLayout(layout2)
         '''
 
-        layout3 = QtWidgets.QGridLayout()
-        self.widget3 = QtWidgets.QWidget()
-        self.widget3.setLayout(layout3)
-
 
         ##layout3
 
         layout3 = QtWidgets.QGridLayout()
-
+        self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
+        self.boutonFillatura = QtWidgets.QPushButton("Filettatura")
+        layout3.addWidget(self.boutonForaturia, 3, 2)
+        layout3.addWidget(self.boutonFillatura, 3, 1)
 
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
@@ -134,12 +133,22 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
+        self.boutonFillatura.clicked.connect(self.fillettatura)
+        self.boutonForaturia.clicked.connect(self.foraturia)
         #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
 
 
     ##les fonctions
+
+
+    def foraturia(self):
+        print('yes')
+
+
+    def fillettatura(self):
+        print('no')
 
     def fanuc(self):
         self.Fanuc=True
@@ -240,8 +249,8 @@ class MaFenetre(QtWidgets.QMainWindow):
                             print()
 
 
-            #self.setCentralWidget(self.widget2)
-            self.__coord.setText(str(self.points[0].coordinate))
+            self.setCentralWidget(self.widget3)
+            #self.__coord.setText(str(self.points[0].coordinate))
         except FileNotFoundError:
             self.__error1.setText('Il file non esiste')
             self.__champTexte.clear()
