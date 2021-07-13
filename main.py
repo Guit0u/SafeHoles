@@ -111,18 +111,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
 
-        layout3 = QtWidgets.QGridLayout()
-        self.__GxxInput = QtWidgets.QLineEdit('')
-        self.__GxxInput.setPlaceholderText("G54")
-        self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
-        self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
-        layout3.addWidget(self.boutonForaturia, 3, 2)
-        layout3.addWidget(self.boutonFillettatura, 3, 1)
-
-        self.widget3 = QtWidgets.QWidget()
-        self.widget3.setLayout(layout3)
-
-
         ##layout 4 : pour les foraturia
         layout4 = QtWidgets.QGridLayout()
         self.__champSecurite4 = QtWidgets.QLineEdit("")
