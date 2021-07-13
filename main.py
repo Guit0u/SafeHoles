@@ -30,6 +30,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Mx = 'M0'
         self.Sxx = 'S0'
         self.Fxx = 'F0'
+        self.Securite = 'Z'
+        self.Profondeur='Z-0'
+
         ##layout1 : rentrer le fichier et le type de sortie
         #self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
@@ -350,7 +353,12 @@ class MaFenetre(QtWidgets.QMainWindow):
             new.write('%\nO0001\n')
         else:
             new = open('1.PRG', 'w')
-        new.write(self.Gxx+'\n')
+        new.write('G54\n')
+        new.write(self.Sxx+'M3\n')
+        new.write('G0 '+self.Securite+'\n')
+        new.write('G98\n')
+        for point in self.points:
+            new.write(self.Gxx+'X'+str(point.x)+'Y'+str(point.y)+self.Profondeur+'R2'+'Q2'+self.Fxx+'\n')
 
     def writefo(self):
         self.__error4.clear()
@@ -369,11 +377,14 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error4.setText('input deve essere un valore numerico')
             self.__champSecurite4.clear()
             return
+        self.Securite = 'Z' + str(security)
+        self.write()
 
     def writefi(self):
         self.__error5.clear()
         self.Mx = self.combo.currentText()
         print(self.Mx)
+
         security = self.__champSecurite5.text()
         if ',' in security:
             try:
@@ -388,6 +399,35 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error5.setText('input deve essere un valore numerico')
             self.__champSecurite5.clear()
             return
+
+        self.Securite = 'Z' + str(security)
+
+        if self.Mx=='M5':
+            self.Sxx = 'S50'
+            self.Fxx = 'F40'
+        elif self.Mx=='M6':
+            self.Sxx = 'S50'
+            self.Fxx = 'F50'
+        elif self.Mx=='M8':
+            self.Sxx = 'S60'
+            self.Fxx = 'F75'
+        elif self.Mx=='M10':
+            self.Sxx = 'S50'
+            self.Fxx = 'F75'
+        elif self.Mx=='M12':
+            self.Sxx = 'S40'
+            self.Fxx = 'F70'
+        elif self.Mx=='M14' or self.Mx=='M16':
+            self.Sxx = 'S50'
+            self.Fxx = 'F100'
+        elif self.Mx=='M20':
+            self.Sxx = 'S50'
+            self.Fxx = 'F125'
+        else:
+            return
+
+        self.write()
+
 
 class Point():
     def __init__(self):
@@ -439,7 +479,6 @@ class Point():
     def coordinate(self):
         """Coordinate of the point as a numpy array"""
         return np.array([self._x, self._y, self._z])
-
 
 
 app = QtWidgets.QApplication(sys.argv)
