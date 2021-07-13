@@ -245,7 +245,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def fillettatura(self):
         print('no')
-        if not self.testGxx:
+        if not self.testGxx():
             return
         self.setCentralWidget(self.widget5)
 
