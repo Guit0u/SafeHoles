@@ -44,10 +44,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout1 = QtWidgets.QGridLayout()
         layout1.addWidget(self.__champTexte,0,1)
         #layout1.addWidget(self.boutonLire, 4,1)
-        layout1.addWidget(self.__champSecurite,1,1)
-        layout1.addWidget(self.__unite,1,0)
+        #layout1.addWidget(self.__champSecurite,1,1)
+        #layout1.addWidget(self.__unite,1,0)
         layout1.addWidget(self.__error1,0,5)
-        layout1.addWidget(self.__error11,1,5)
+        #layout1.addWidget(self.__error11,1,5)
         layout1.addWidget(self.__labelText, 0,0)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
@@ -164,47 +164,25 @@ class MaFenetre(QtWidgets.QMainWindow):
             return True
         else:
             self.__GxxInput.clear()
+            self.__error4.setText('T mosh')
             print('t mosh')
             return False
 
 
 
     def foraturia(self):
-        self.setCentralWidget(self.widget4)
+
         print('yes')
-        self.testGxx()
-        self.__error4.clear()
-
-        security = self.__champSecurite4.text()
-        if ',' in security:
-            security = float(security.replace(',', '.'))
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error4.setText('input deve essere un valore numerico')
-            self.__champSecurite4.clear()
+        if not (self.testGxx()):
+            print('bonjour')
             return
-
-
+        self.setCentralWidget(self.widget4)
 
     def fillettatura(self):
-        self.setCentralWidget(self.widget5)
         print('no')
-        self.testGxx()
-        self.__error5.clear()
-
-
-
-        security = self.__champSecurite5.text()
-        if ',' in security:
-            security = float(security.replace(',', '.'))
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error5.setText('input deve essere un valore numerico')
-            self.__champSecurite5.clear()
+        if not self.testGxx():
             return
-
+        self.setCentralWidget(self.widget5)
 
     def fanuc(self):
         self.Fanuc=True
