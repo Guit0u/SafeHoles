@@ -115,12 +115,11 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout4 = QtWidgets.QGridLayout()
         self.__champSecurite4 = QtWidgets.QLineEdit("")
         layout4.addWidget(self.__champSecurite4, 1, 1)
+        self.__error4 = QtWidgets.QLabel()
+        layout4.addWidget(self.__error4, 1, 5)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
         layout4.addWidget(self.boutonEntrata4, 4, 0)
 
-
-        self.__error4 = QtWidgets.QLabel()
-        layout4.addWidget(self.__error4,1,5)
 
         self.widget4 = QtWidgets.QWidget()
         self.widget4.setLayout(layout4)
@@ -128,6 +127,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         ##layout 5 : pour les fillatura
         layout5 = QtWidgets.QGridLayout()
         self.__champSecurite5 = QtWidgets.QLineEdit("")
+        self.__champSecurite5.setPlaceholderText("42")
         layout5.addWidget(self.__champSecurite5, 1, 1)
         self.__error5 = QtWidgets.QLabel()
         layout5.addWidget(self.__error5, 1, 5)
@@ -338,11 +338,17 @@ class MaFenetre(QtWidgets.QMainWindow):
         for x in self.points:
             new.write(str(x.x))
 
-    def writefi(self):
+    def writefo(self):
         self.__error4.clear()
+
         security = self.__champSecurite4.text()
         if ',' in security:
-            security = float(security.replace(',', '.'))
+            try:
+                security = float(security.replace(',', '.'))
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champSecurite4.clear()
+                return
         try:
             security = float(security)
         except ValueError:
@@ -350,11 +356,17 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__champSecurite4.clear()
             return
 
-    def writefo(self):
+    def writefi(self):
         self.__error5.clear()
+
         security = self.__champSecurite5.text()
         if ',' in security:
-            security = float(security.replace(',', '.'))
+            try:
+                security = float(security.replace(',', '.'))
+            except ValueError:
+                self.__error5.setText('input deve essere un valore numerico')
+                self.__champSecurite5.clear()
+                return
         try:
             security = float(security)
         except ValueError:
