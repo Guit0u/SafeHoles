@@ -30,6 +30,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Mx = 'M0'
         self.Sxx = 'S0'
         self.Fxx = 'F0'
+        self.Rxx = 'R0'
+        self.Qxx = 'Q0'
         self.Securite = 'Z'
         self.Profondeur='Z-0'
 
@@ -125,8 +127,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champSecurite4 = QtWidgets.QLineEdit("")
         self.__champSecurite4.setPlaceholderText("100")
         layout4.addWidget(self.__champSecurite4, 0, 1)
-        self.__labelSecurite = QtWidgets.QLabel("Sicurezza (millimetri)")
-        layout4.addWidget(self.__labelSecurite,0,0)
         self.__error4 = QtWidgets.QLabel()
         layout4.addWidget(self.__error4, 0, 3)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
@@ -413,7 +413,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         new.write('G0 '+self.Securite+'\n')
         new.write('G98\n')
         for point in self.points:
-            new.write(self.Gxx+'X'+str(point.x)+'Y'+str(point.y)+self.Profondeur+'R2'+'Q2'+self.Fxx+'\n')
+            new.write(self.Gxx+'X'+str(int(point.x))+'Y'+str(int(point.y))+self.Profondeur+self.Rxx+self.Qxx+self.Fxx+'\n')
+        new.write('M30')
+        if(self.Fanuc):
+            new.write('\n%')
 
     def writefo(self):
         self.__error4.clear()
@@ -421,7 +424,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         security = self.__champSecurite4.text()
         if ',' in security:
             try:
-                security = float(security.replace(',', '.'))
+                security = float(security.replace(',',  '.'))
             except ValueError:
                 self.__error4.setText('input deve essere un valore numerico')
                 self.__champSecurite4.clear()
