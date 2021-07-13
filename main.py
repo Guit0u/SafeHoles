@@ -26,8 +26,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.infopoints= []
         self.compteur = 0
         self.Fanuc = False
-        self.Gxx = 'G54'
-
+        self.Gxx = 'G'
+        self.Mx = 'M0'
+        self.Sxx = 'S0'
+        self.Fxx = 'F0'
         ##layout1 : rentrer le fichier et le type de sortie
         #self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
@@ -129,8 +131,21 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout5 = QtWidgets.QGridLayout()
         self.__champSecurite5 = QtWidgets.QLineEdit("")
         layout5.addWidget(self.__champSecurite5, 1, 1)
+
+        self.combo = QtWidgets.QComboBox()
+        self.combo.addItem('M5')
+        self.combo.addItem('M6')
+        self.combo.addItem('M8')
+        self.combo.addItem('M10')
+        self.combo.addItem('M12')
+        self.combo.addItem('M14')
+        self.combo.addItem('M16')
+        self.combo.addItem('M20')
+        layout5.addWidget(self.combo)
+
         self.__error5 = QtWidgets.QLabel()
         layout5.addWidget(self.__error5, 1, 5)
+
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
         layout5.addWidget(self.boutonEntrata5, 4, 0)
 
@@ -335,12 +350,13 @@ class MaFenetre(QtWidgets.QMainWindow):
             new.write('%\nO0001\n')
         else:
             new = open('1.PRG', 'w')
-        for x in self.points:
-            new.write(str(x.x))
+        new.write(self.Gxx+'\n')
 
     def writefi(self):
         self.__error4.clear()
         security = self.__champSecurite4.text()
+        self.Mx = self.combo.currentText()
+        print(self.Mx)
         if ',' in security:
             security = float(security.replace(',', '.'))
         try:
@@ -349,6 +365,8 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error4.setText('input deve essere un valore numerico')
             self.__champSecurite4.clear()
             return
+        self.Mx = self.combo.currentText()
+        print(self.Mx)
 
     def writefo(self):
         self.__error5.clear()
