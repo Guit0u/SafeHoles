@@ -1,6 +1,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from matplotlib import numpy as np
 import sys
+import re
 ##Fenetre utilisateur
 
 def parse_float(str_value):
@@ -103,8 +104,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__GxxInput.setPlaceholderText("G54")
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
         self.boutonFillatura = QtWidgets.QPushButton("Filettatura")
-        layout3.addWidget(self.boutonForaturia, 3, 2)
-        layout3.addWidget(self.boutonFillatura, 3, 1)
+        layout3.addWidget(self.boutonForaturia, 1, 0)
+        layout3.addWidget(self.boutonFillatura, 1, 2)
+        layout3.addWidget(self.__GxxInput,0,1)
 
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
@@ -112,26 +114,11 @@ class MaFenetre(QtWidgets.QMainWindow):
         #self.setCentralWidget(self.widget3)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         ##appel de fonction
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
-        self.boutonFillatura.clicked.connect(self.write)
+        self.boutonFillatura.clicked.connect(self.fillettatura)
         self.boutonForaturia.clicked.connect(self.foraturia)
         #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
@@ -140,16 +127,24 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     ##les fonctions
 
+    def testGxx(self):
+        input = self.__GxxInput.text()
+        test = re.findall("^G\d\d$",input)
+        if test:
+            self.Gxx = self.__GxxInput.text()
+            return True
+        else:
+            self.__GxxInput.clear()
+            print('t mosh')
+            return False
 
     def foraturia(self):
         print('yes')
-        self.Gxx = self.__GxxInput.text()
-
+        self.testGxx()
 
     def fillettatura(self):
         print('no')
-        self.Gxx = self.__GxxInput.text()
-
+        self.testGxx()
 
     def fanuc(self):
         self.Fanuc=True
