@@ -109,6 +109,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout3 = QtWidgets.QGridLayout()
         self.__GxxInput = QtWidgets.QLineEdit('')
         self.__GxxInput.setPlaceholderText("G54")
+        self.__error3 = QtWidgets.QLabel('')
+
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
         self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
         self.__interval = QtWidgets.QLabel("da G25 a G1000")
@@ -116,6 +118,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout3.addWidget(self.boutonFillettatura, 1, 2)
         layout3.addWidget(self.__GxxInput,0,1)
         layout3.addWidget(self.__interval, 0, 0)
+        layout3.addWidget(self.__error3, 0, 2)
 
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
@@ -228,7 +231,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             return True
         else:
             self.__GxxInput.clear()
-            self.__error4.setText('T mosh')
+            self.__error3.setText('questo comando non esiste')
             print('t mosh')
             return False
 
