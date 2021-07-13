@@ -21,15 +21,11 @@ class MaFenetre(QtWidgets.QMainWindow):
         super().__init__()
 
         ##variables globales à la con
-        self.points=[]
-        self.infopoints=[]
+        self.points = []
+        self.infopoints= []
         self.compteur = 0
-        self.Fanuc=False
-
-
-
-
-
+        self.Fanuc = False
+        self.Gxx = 'G54'
 
         ##layout1
         #self.boutonLire = QtWidgets.QPushButton("entrata")
@@ -103,6 +99,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         ##layout3
 
         layout3 = QtWidgets.QGridLayout()
+        self.__GxxInput = QtWidgets.QLineEdit('')
+        self.__GxxInput.setPlaceholderText("G54")
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
         self.boutonFillatura = QtWidgets.QPushButton("Filettatura")
         layout3.addWidget(self.boutonForaturia, 3, 2)
@@ -133,7 +131,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
-        self.boutonFillatura.clicked.connect(self.fillettatura)
+        self.boutonFillatura.clicked.connect(self.write)
         self.boutonForaturia.clicked.connect(self.foraturia)
         #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
@@ -145,10 +143,13 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def foraturia(self):
         print('yes')
+        self.Gxx = self.__GxxInput.text()
 
 
     def fillettatura(self):
         print('no')
+        self.Gxx = self.__GxxInput.text()
+
 
     def fanuc(self):
         self.Fanuc=True
@@ -300,14 +301,13 @@ class MaFenetre(QtWidgets.QMainWindow):
                 self.setCentralWidget(self.widget3)
 
     def write(self):
-        if self.fanuc:
+        if self.Fanuc:
             new = open('O0001', 'w')
-            new.write('%\nO0001')
+            new.write('%\nO0001\n')
         else:
             new = open('1.PRG', 'w')
         for x in self.points:
-            new.write(x)
-
+            new.write(str(x.x))
 
 
 class Point():
