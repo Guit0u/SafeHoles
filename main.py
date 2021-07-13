@@ -52,7 +52,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         #layout1.addWidget(self.__champSecurite,1,1)
         #layout1.addWidget(self.__unite,1,0)
         layout1.addWidget(self.__error1,0,5)
-        #layout1.addWidget(self.__error11,1,5)
+        layout1.addWidget(self.__error11,1,5)
         layout1.addWidget(self.__labelText, 0,0)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
@@ -205,7 +205,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def fillettatura(self):
         print('no')
-        if not self.testGxx():
+        if not self.testGxx:
             return
         self.setCentralWidget(self.widget5)
 
@@ -290,7 +290,12 @@ class MaFenetre(QtWidgets.QMainWindow):
                             first_param_line = True
                             param_string = param_string.strip()[:-1]
                             parameters = param_string.split(param_sep)
-                            self.points[pointer_dict[directory_pointer]]._add_parameters(parameters)
+                            pt=self.points[pointer_dict[directory_pointer]]
+                            pt._add_parameters(parameters)
+                            zref = self.points[0].coordinate[2]
+                            if pt.coordinate[2] != zref:
+                                self.__error11.setText('Tutti i punti non hanno la stessa coordinata in z')
+                                return
 
                     elif id_code == 'T':  # Terminate
                         for e in self.points:
