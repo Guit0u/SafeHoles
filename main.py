@@ -27,7 +27,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Fanuc = False
         self.Gxx = 'G54'
 
-        ##layout1
+        ##layout1 : rentrer le fichier et le type de sortie
         #self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("esempio.igs")
@@ -58,7 +58,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.setCentralWidget(widget1)
 
-        ##layout2
+        ##layout2 : avortée
         '''
         layout2 = QtWidgets.QGridLayout()
 
@@ -96,25 +96,51 @@ class MaFenetre(QtWidgets.QMainWindow):
         '''
 
 
-        ##layout3
+        ##layout3 : G et type de troue
 
         layout3 = QtWidgets.QGridLayout()
         self.__GxxInput = QtWidgets.QLineEdit('')
         self.__GxxInput.setPlaceholderText("G54")
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
-        self.boutonFillatura = QtWidgets.QPushButton("Filettatura")
+        self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
         layout3.addWidget(self.boutonForaturia, 3, 2)
-        layout3.addWidget(self.boutonFillatura, 3, 1)
+        layout3.addWidget(self.boutonFillettatura, 3, 1)
 
         self.widget3 = QtWidgets.QWidget()
         self.widget3.setLayout(layout3)
 
-        #self.setCentralWidget(self.widget3)
+        layout3 = QtWidgets.QGridLayout()
+        self.__GxxInput = QtWidgets.QLineEdit('')
+        self.__GxxInput.setPlaceholderText("G54")
+        self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
+        self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
+        layout3.addWidget(self.boutonForaturia, 3, 2)
+        layout3.addWidget(self.boutonFillettatura, 3, 1)
+
+        self.widget3 = QtWidgets.QWidget()
+        self.widget3.setLayout(layout3)
 
 
+        ##layout 4 : pour les foraturia
+        layout4 = QtWidgets.QGridLayout()
+        self.__champSecurite4 = QtWidgets.QLineEdit("")
+        layout4.addWidget(self.__champSecurite4, 1, 1)
 
+        self.__error4 = QtWidgets.QLabel()
+        layout4.addWidget(self.__error4,1,5)
 
+        self.widget4 = QtWidgets.QWidget()
+        self.widget4.setLayout(layout4)
 
+        ##layout 5 : pour les fillatura
+        layout5 = QtWidgets.QGridLayout()
+        self.__champSecurite5 = QtWidgets.QLineEdit("")
+        layout5.addWidget(self.__champSecurite5, 1, 1)
+        self.__error5 = QtWidgets.QLabel()
+        layout5.addWidget(self.__error5, 1, 5)
+
+        self.widget5 = QtWidgets.QWidget()
+        self.widget5.setLayout(layout5)
 
 
 
@@ -131,7 +157,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
-        self.boutonFillatura.clicked.connect(self.write)
+        self.boutonFillettatura.clicked.connect(self.fillettatura)
         self.boutonForaturia.clicked.connect(self.foraturia)
         #self.boutonLire.clicked.connect(self.read)
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
@@ -141,14 +167,38 @@ class MaFenetre(QtWidgets.QMainWindow):
     ##les fonctions
 
 
+
+
     def foraturia(self):
-        print('yes')
+        self.setCentralWidget(self.widget4)
         self.Gxx = self.__GxxInput.text()
+        self.__error4.clear()
+
+        security = self.__champSecurite4.text()
+        if ',' in security:
+            security = float(security.replace(',', '.'))
+        try:
+            security = float(security)
+        except ValueError:
+            self.__error4.setText('input deve essere un valore numerico')
+            self.__champSecurite4.clear()
+            return
 
 
     def fillettatura(self):
-        print('no')
+        self.setCentralWidget(self.widget5)
         self.Gxx = self.__GxxInput.text()
+        self.__error5.clear()
+
+        security = self.__champSecurite5.text()
+        if ',' in security:
+            security = float(security.replace(',', '.'))
+        try:
+            security = float(security)
+        except ValueError:
+            self.__error5.setText('input deve essere un valore numerico')
+            self.__champSecurite5.clear()
+            return
 
 
     def fanuc(self):
@@ -158,18 +208,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def read(self):
         self.__error1.clear()
-        self.__error11.clear()
         filename = self.__champTexte.text()
-
-        security=self.__champSecurite.text()
-        if ',' in security:
-            security = float(security.replace(',', '.'))
-        try:
-            security = float(security)
-        except ValueError:
-            self.__error11.setText('input deve essere un valore numerico')
-            self.__champSecurite.clear()
-            return
 
         try:
             with open(filename,'r') as f:
