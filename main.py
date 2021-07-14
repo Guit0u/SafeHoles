@@ -165,12 +165,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget4.setLayout(layout4)
 
         ##layout 5 : pour les fillatura
-        layout5 = QtWidgets.QGridLayout()
+        self.layout5 = QtWidgets.QGridLayout()
         self.__securite5 = QtWidgets.QLabel('z di sicurezza')
-        layout5.addWidget(self.__securite5, 1, 0)
+        self.layout5.addWidget(self.__securite5, 1, 0)
         self.__champSecurite5 = QtWidgets.QLineEdit("")
         self.__champSecurite5.setPlaceholderText("42")
-        layout5.addWidget(self.__champSecurite5, 1, 1)
+        self.layout5.addWidget(self.__champSecurite5, 1, 1)
 
         self.combo = QtWidgets.QComboBox()
         self.combo.addItem('M5')
@@ -181,32 +181,57 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.combo.addItem('M14')
         self.combo.addItem('M16')
         self.combo.addItem('M20')
-        layout5.addWidget(self.combo,0,1)
+        self.layout5.addWidget(self.combo,0,1)
+
+        self.cb = QtWidgets.QCheckBox('Altro M')
+        #self.cb.toggle()
+        self.cb.stateChanged.connect(self.newParameters)
+        self.layout5.addWidget(self.cb,0,0)
 
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("42")
-        layout5.addWidget(self.__labelProfondeur, 4, 0)
-        layout5.addWidget(self.__champProfondeur, 4, 1)
+        self.layout5.addWidget(self.__labelProfondeur, 4, 0)
+        self.layout5.addWidget(self.__champProfondeur, 4, 1)
         self.__R = QtWidgets.QLabel("quota di avvicimento (mm) :")
         self.__champR = QtWidgets.QLineEdit("")
         self.__champR.setPlaceholderText("42")
-        layout5.addWidget(self.__champR, 5, 1)
-        layout5.addWidget(self.__R, 5, 0)
+        self.layout5.addWidget(self.__champR, 5, 1)
+        self.layout5.addWidget(self.__R, 5, 0)
         self.__Q = QtWidgets.QLabel("Q (mm) :")
         self.__champQ = QtWidgets.QLineEdit("")
         self.__champQ.setPlaceholderText("42")
-        layout5.addWidget(self.__Q, 6, 0)
-        layout5.addWidget(self.__champQ, 6, 1)
+        self.layout5.addWidget(self.__Q, 6, 0)
+        self.layout5.addWidget(self.__champQ, 6, 1)
 
         self.__error5 = QtWidgets.QLabel()
-        layout5.addWidget(self.__error5, 1, 5)
+        self.layout5.addWidget(self.__error5, 1, 5)
 
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
-        layout5.addWidget(self.boutonEntrata5, 7, 1)
+        self.layout5.addWidget(self.boutonEntrata5, 7, 1)
 
         self.widget5 = QtWidgets.QWidget()
-        self.widget5.setLayout(layout5)
+        self.widget5.setLayout(self.layout5)
+
+        #params supplémentaires pour M personnalisé
+
+        self.__labelNewSxx = QtWidgets.QLabel("Speed (t/m) :")
+        self.__champNewSxx = QtWidgets.QLineEdit("")
+        self.__champNewSxx.setPlaceholderText("42")
+
+        self.__labelNewFxx = QtWidgets.QLabel("Avanzamento (F) (mm) :")
+        self.__champNewFxx = QtWidgets.QLineEdit("")
+        self.__champNewFxx.setPlaceholderText("42")
+
+        self.layout5.addWidget(self.__labelNewSxx, 2, 0)
+        self.layout5.addWidget(self.__champNewSxx, 2, 1)
+        self.layout5.addWidget(self.__labelNewFxx, 3, 0)
+        self.layout5.addWidget(self.__champNewFxx, 3, 1)
+
+        self.__labelNewSxx.hide()
+        self.__champNewSxx.hide()
+        self.__labelNewFxx.hide()
+        self.__champNewFxx.hide()
 
         ##appel de fonction
 
@@ -235,7 +260,31 @@ class MaFenetre(QtWidgets.QMainWindow):
             print('t mosh')
             return False
 
+    def newParameters(self):
+        if(self.combo.count()==8):
+            self.combo.addItem('Altro M')
+            self.combo.setCurrentIndex(8)
+            for i in range(8):
+                self.combo.removeItem(0)
+            self.__labelNewSxx.show()
+            self.__champNewSxx.show()
+            self.__labelNewFxx.show()
+            self.__champNewFxx.show()
 
+        else:
+            self.combo.removeItem(0)
+            self.combo.addItem('M5')
+            self.combo.addItem('M6')
+            self.combo.addItem('M8')
+            self.combo.addItem('M10')
+            self.combo.addItem('M12')
+            self.combo.addItem('M14')
+            self.combo.addItem('M16')
+            self.combo.addItem('M20')
+            self.__labelNewSxx.hide()
+            self.__champNewSxx.hide()
+            self.__labelNewFxx.hide()
+            self.__champNewFxx.hide()
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -401,8 +450,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         new.write('G0 '+self.Securite+'\n')
         new.write('G98\n')
         for point in self.points:
-            new.write(self.Gxx + 'X' + str(int(point.x)) + 'Y' + str(
-                int(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
+            new.write(self.Gxx + 'X' + str(point.x) + 'Y' + str(
+                point.y) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
         if (self.Fanuc):
             new.write('\n%')
@@ -431,10 +480,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Qxx = 'Q' + str(q)
         self.Rxx = 'R' + str(r)
         print(self.Securite,self.Sxx,self.Fxx,self.Profondeur, self.Qxx,self.Rxx)
-
-
-
-
 
         self.write()
 
@@ -465,7 +510,9 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.Sxx = 'S50'
             self.Fxx = 'F125'
         else:
-            return
+            """self.Mx = newMx
+               self.Sxx = newSxx
+               self.Fxx = new Fxx"""
 
         security = self.__champSecurite5.text()
         profondeur = self.__champProfondeur.text()
