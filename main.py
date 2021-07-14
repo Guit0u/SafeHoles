@@ -165,12 +165,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget4.setLayout(layout4)
 
         ##layout 5 : pour les fillatura
-        self.layout5 = QtWidgets.QGridLayout()
+        layout5 = QtWidgets.QGridLayout()
         self.__securite5 = QtWidgets.QLabel('z di sicurezza')
-        self.layout5.addWidget(self.__securite5, 1, 0)
+        layout5.addWidget(self.__securite5, 1, 0)
         self.__champSecurite5 = QtWidgets.QLineEdit("")
         self.__champSecurite5.setPlaceholderText("42")
-        self.layout5.addWidget(self.__champSecurite5, 1, 1)
+        layout5.addWidget(self.__champSecurite5, 1, 1)
 
         self.combo = QtWidgets.QComboBox()
         self.combo.addItem('M5')
@@ -181,37 +181,37 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.combo.addItem('M14')
         self.combo.addItem('M16')
         self.combo.addItem('M20')
-        self.layout5.addWidget(self.combo,0,1)
+        layout5.addWidget(self.combo,0,1)
 
         self.cb = QtWidgets.QCheckBox('Altro M')
         #self.cb.toggle()
         self.cb.stateChanged.connect(self.newParameters)
-        self.layout5.addWidget(self.cb,0,0)
+        layout5.addWidget(self.cb,0,0)
 
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("42")
-        self.layout5.addWidget(self.__labelProfondeur, 4, 0)
-        self.layout5.addWidget(self.__champProfondeur, 4, 1)
+        layout5.addWidget(self.__labelProfondeur, 4, 0)
+        layout5.addWidget(self.__champProfondeur, 4, 1)
         self.__R = QtWidgets.QLabel("quota di avvicimento (mm) :")
         self.__champR = QtWidgets.QLineEdit("")
         self.__champR.setPlaceholderText("42")
-        self.layout5.addWidget(self.__champR, 5, 1)
-        self.layout5.addWidget(self.__R, 5, 0)
+        layout5.addWidget(self.__champR, 5, 1)
+        layout5.addWidget(self.__R, 5, 0)
         self.__Q = QtWidgets.QLabel("Q (mm) :")
         self.__champQ = QtWidgets.QLineEdit("")
         self.__champQ.setPlaceholderText("42")
-        self.layout5.addWidget(self.__Q, 6, 0)
-        self.layout5.addWidget(self.__champQ, 6, 1)
+        layout5.addWidget(self.__Q, 6, 0)
+        layout5.addWidget(self.__champQ, 6, 1)
 
         self.__error5 = QtWidgets.QLabel()
-        self.layout5.addWidget(self.__error5, 1, 5)
+        layout5.addWidget(self.__error5, 1, 5)
 
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
-        self.layout5.addWidget(self.boutonEntrata5, 7, 1)
+        layout5.addWidget(self.boutonEntrata5, 7, 1)
 
         self.widget5 = QtWidgets.QWidget()
-        self.widget5.setLayout(self.layout5)
+        self.widget5.setLayout(layout5)
 
         #params supplémentaires pour M personnalisé
 
@@ -223,10 +223,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champNewFxx = QtWidgets.QLineEdit("")
         self.__champNewFxx.setPlaceholderText("42")
 
-        self.layout5.addWidget(self.__labelNewSxx, 2, 0)
-        self.layout5.addWidget(self.__champNewSxx, 2, 1)
-        self.layout5.addWidget(self.__labelNewFxx, 3, 0)
-        self.layout5.addWidget(self.__champNewFxx, 3, 1)
+        layout5.addWidget(self.__labelNewSxx, 2, 0)
+        layout5.addWidget(self.__champNewSxx, 2, 1)
+        layout5.addWidget(self.__labelNewFxx, 3, 0)
+        layout5.addWidget(self.__champNewFxx, 3, 1)
 
         self.__labelNewSxx.hide()
         self.__champNewSxx.hide()
@@ -605,9 +605,32 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.Sxx = 'S50'
             self.Fxx = 'F125'
         else:
-            """self.Mx = newMx
-               self.Sxx = newSxx
-               self.Fxx = new Fxx"""
+            CurrSxx = self.__champNewSxx.text()
+            CurrFxx = self.__champNewFxx.text()
+            try:
+                CurrSxx = int(CurrSxx)
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champQ4.clear()
+                return
+            if CurrSxx < 0 or CurrSxx > 10000:
+                self.__error4.setText('intervallo sbagliato per la velocità')
+                self.__champQ4.clear()
+                return
+
+            try:
+                CurrFxx = int(CurrFxx)
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champQ4.clear()
+                return
+            if CurrFxx < 0 or CurrFxx > 10000:
+                self.__error4.setText('intervallo sbagliato per la avanzamento')
+                self.__champQ4.clear()
+                return
+
+            self.Sxx = 'S' + str(CurrSxx)
+            self.Fxx = 'F' + str(CurrFxx)
 
         ##verification
         security = self.__champSecurite5.text()
