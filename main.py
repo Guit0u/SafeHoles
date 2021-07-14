@@ -185,6 +185,11 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.combo.addItem('M20')
         layout5.addWidget(self.combo,0,1)
 
+        self.cb = QtWidgets.QCheckBox('Altro M')
+        #self.cb.toggle()
+        self.cb.stateChanged.connect(self.newParameters)
+        layout5.addWidget(self.cb,0,0)
+
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
         self.__champProfondeur.setPlaceholderText("42")
@@ -205,6 +210,26 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.widget5 = QtWidgets.QWidget()
         self.widget5.setLayout(layout5)
+
+        #params supplémentaires pour M personnalisé
+
+        self.__labelNewSxx = QtWidgets.QLabel("Speed (t/m) :")
+        self.__champNewSxx = QtWidgets.QLineEdit("")
+        self.__champNewSxx.setPlaceholderText("42")
+
+        self.__labelNewFxx = QtWidgets.QLabel("Avanzamento (F) (mm) :")
+        self.__champNewFxx = QtWidgets.QLineEdit("")
+        self.__champNewFxx.setPlaceholderText("42")
+
+        layout5.addWidget(self.__labelNewSxx, 2, 0)
+        layout5.addWidget(self.__champNewSxx, 2, 1)
+        layout5.addWidget(self.__labelNewFxx, 3, 0)
+        layout5.addWidget(self.__champNewFxx, 3, 1)
+
+        self.__labelNewSxx.hide()
+        self.__champNewSxx.hide()
+        self.__labelNewFxx.hide()
+        self.__champNewFxx.hide()
 
         ##layout6 : alesage
         layout6 = QtWidgets.QGridLayout()
@@ -249,7 +274,31 @@ class MaFenetre(QtWidgets.QMainWindow):
             print('t mosh')
             return False
 
+    def newParameters(self):
+        if(self.combo.count()==8):
+            self.combo.addItem('Altro M')
+            self.combo.setCurrentIndex(8)
+            for i in range(8):
+                self.combo.removeItem(0)
+            self.__labelNewSxx.show()
+            self.__champNewSxx.show()
+            self.__labelNewFxx.show()
+            self.__champNewFxx.show()
 
+        else:
+            self.combo.removeItem(0)
+            self.combo.addItem('M5')
+            self.combo.addItem('M6')
+            self.combo.addItem('M8')
+            self.combo.addItem('M10')
+            self.combo.addItem('M12')
+            self.combo.addItem('M14')
+            self.combo.addItem('M16')
+            self.combo.addItem('M20')
+            self.__labelNewSxx.hide()
+            self.__champNewSxx.hide()
+            self.__labelNewFxx.hide()
+            self.__champNewFxx.hide()
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -598,7 +647,32 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.Sxx = 'S50'
             self.Fxx = 'F125'
         else:
-            return
+            CurrSxx = self.__champNewSxx.text()
+            CurrFxx = self.__champNewFxx.text()
+            try:
+                CurrSxx = int(CurrSxx)
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champQ4.clear()
+                return
+            if CurrSxx < 0 or CurrSxx > 10000:
+                self.__error4.setText('intervallo sbagliato per la velocità')
+                self.__champQ4.clear()
+                return
+
+            try:
+                CurrFxx = int(CurrFxx)
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champQ4.clear()
+                return
+            if CurrFxx < 0 or CurrFxx > 10000:
+                self.__error4.setText('intervallo sbagliato per la avanzamento')
+                self.__champQ4.clear()
+                return
+
+            self.Sxx = 'S' + str(CurrSxx)
+            self.Fxx = 'F' + str(CurrFxx)
 
         ##verification
         security = self.__champSecurite5.text()
