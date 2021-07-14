@@ -149,7 +149,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champProfondeur4.setPlaceholderText("42")
         layout4.addWidget(self.__labelProfondeur4, 3, 0)
         layout4.addWidget(self.__champProfondeur4, 3, 1)
-        self.__R4 = QtWidgets.QLabel("quota di avvicimento (mm) :")
+        self.__R4 = QtWidgets.QLabel("quota di avvicimento (R) (mm) :")
         self.__champR4 = QtWidgets.QLineEdit("")
         self.__champR4.setPlaceholderText("42")
         layout4.addWidget(self.__champR4, 4, 1)
@@ -419,11 +419,106 @@ class MaFenetre(QtWidgets.QMainWindow):
         verif=[security,speed,avanzamento,profondeur,r,q]
 
         for element in verif:
-            try:
-                element = int(element)
-            except ValueError:
-                self.__error4.setText('input deve essere un valore numerico')
-                return
+            if element == security:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error4.setText('input deve essere un valore numerico')
+                        self.__champSecurite.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champSecurite.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per la sicurezza')
+                    self.__champSecurite.clear()
+                    return
+            if element == profondeur:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error4.setText('input deve essere un valore numerico')
+                        self.__champProfondeur4.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champProfondeur4.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per la profondità')
+                    self.__champProfondeur4.clear()
+                    return
+            if element == r:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error4.setText('input deve essere un valore numerico')
+                        self.__champR4.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champR4.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
+                    self.__champR4.clear()
+                    return
+
+            if element == q:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error4.setText('input deve essere un valore numerico')
+                        self.__champQ4.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champQ4.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per Q')
+                    self.__champQ4.clear()
+                    return
+
+
+            if element == speed:
+                try:
+                    element = int(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champQ4.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per la velocità')
+                    self.__champQ4.clear()
+                    return
+
+            if element == avanzamento:
+                try:
+                    element = int(element)
+                except ValueError:
+                    self.__error4.setText('input deve essere un valore numerico')
+                    self.__champQ4.clear()
+                    return
+                if element < 0 or element > 10000:
+                    self.__error4.setText('intervallo sbagliato per la avanzamento')
+                    self.__champQ4.clear()
+                    return
+
+
         self.Securite = 'Z' + str(security)
         self.Sxx = 'S' + str(speed)
         self.Fxx = 'F' + str(avanzamento)
@@ -467,18 +562,90 @@ class MaFenetre(QtWidgets.QMainWindow):
         else:
             return
 
+        ##verification
         security = self.__champSecurite5.text()
         profondeur = self.__champProfondeur.text()
         r = self.__champR.text()
         q = self.__champQ.text()
-        verif = [security, profondeur, r, q]
 
+
+        verif = [security, profondeur, r, q]
         for element in verif:
-            try:
-                element = int(element)
-            except ValueError:
-                self.__error5.setText('input deve essere un valore numerico')
-                return
+            if element == security:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error5.setText('input deve essere un valore numerico')
+                        self.__champSecurite5.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error5.setText('input deve essere un valore numerico')
+                    self.__champSecurite5.clear()
+                    return
+                if element<0 or element>10000:
+                    self.__error5.setText('intervallo sbagliato per la sicurezza')
+                    self.__champSecurite5.clear()
+                    return
+            if element == profondeur:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error5.setText('input deve essere un valore numerico')
+                        self.__champProfondeur.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error5.setText('input deve essere un valore numerico')
+                    self.__champProfondeur.clear()
+                    return
+                if element<0 or element>10000:
+                    self.__error5.setText('intervallo sbagliato per la profondità')
+                    self.__champProfondeur.clear()
+                    return
+            if element == r:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error5.setText('input deve essere un valore numerico')
+                        self.__champR.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error5.setText('input deve essere un valore numerico')
+                    self.__champR.clear()
+                    return
+                if element<0 or element>10000:
+                    self.__error5.setText('intervallo sbagliato per la quota di avvicimento')
+                    self.__champR.clear()
+                    return
+
+            if element == q:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error5.setText('input deve essere un valore numerico')
+                        self.__champQ.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error5.setText('input deve essere un valore numerico')
+                    self.__champQ.clear()
+                    return
+                if element<0 or element>10000:
+                    self.__error5.setText('intervallo sbagliato per Q')
+                    self.__champQ.clear()
+                    return
+
+
 
         self.Securite = 'Z' + str(security)
         self.Profondeur = 'Z-' + str(profondeur)
