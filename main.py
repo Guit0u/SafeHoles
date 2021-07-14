@@ -60,7 +60,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         widget1.setLayout(layout1)
 
         self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
-        self.boutonSchlong = QtWidgets.QPushButton("Schlong")
+        self.boutonSchlong = QtWidgets.QPushButton("She hong")
         layout1.addWidget(self.boutonFanuc, 3, 2)
         layout1.addWidget(self.boutonSchlong, 3, 1)
 
@@ -113,9 +113,11 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
         self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
+        self.boutonAlesaggio = QtWidgets.QPushButton("Alesaggio")
         self.__interval = QtWidgets.QLabel("da G25 a G1000")
         layout3.addWidget(self.boutonForaturia, 1, 0)
-        layout3.addWidget(self.boutonFillettatura, 1, 2)
+        layout3.addWidget(self.boutonFillettatura, 1, 1)
+        layout3.addWidget(self.boutonAlesaggio,1,2)
         layout3.addWidget(self.__GxxInput,0,1)
         layout3.addWidget(self.__interval, 0, 0)
         layout3.addWidget(self.__error3, 0, 2)
@@ -193,11 +195,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champR.setPlaceholderText("42")
         layout5.addWidget(self.__champR, 5, 1)
         layout5.addWidget(self.__R, 5, 0)
-        self.__Q = QtWidgets.QLabel("Q (mm) :")
-        self.__champQ = QtWidgets.QLineEdit("")
-        self.__champQ.setPlaceholderText("42")
-        layout5.addWidget(self.__Q, 6, 0)
-        layout5.addWidget(self.__champQ, 6, 1)
+
 
         self.__error5 = QtWidgets.QLabel()
         layout5.addWidget(self.__error5, 1, 5)
@@ -208,12 +206,28 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget5 = QtWidgets.QWidget()
         self.widget5.setLayout(layout5)
 
+        ##layout6 : alesage
+        layout6 = QtWidgets.QGridLayout()
+        self.widget6 = QtWidgets.QWidget()
+        self.widget6.setLayout(layout6)
+
+
+
+
+
+
+
+
+
+
+
         ##appel de fonction
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
         self.boutonFillettatura.clicked.connect(self.fillettatura)
         self.boutonForaturia.clicked.connect(self.foraturia)
+        self.boutonAlesaggio.clicked.connect(self.alesaggio)
         self.boutonEntrata5.clicked.connect(self.writefi)
         self.boutonEntrata4.clicked.connect(self.writefo)
         #self.boutonLire.clicked.connect(self.read)
@@ -249,9 +263,18 @@ class MaFenetre(QtWidgets.QMainWindow):
             return
         self.setCentralWidget(self.widget5)
 
+    def alesaggio(self):
+        if not self.testGxx():
+            return
+        self.setCentralWidget(self.widget6)
+
     def fanuc(self):
         self.Fanuc=True
         self.read()
+
+
+
+
 
 
     def read(self):
@@ -390,24 +413,38 @@ class MaFenetre(QtWidgets.QMainWindow):
             if self.compteur==len(self.points):
                 self.setCentralWidget(self.widget3)
 
-    def write(self):
+
+
+    def write(self,option):
         if self.Fanuc:
             new = open('O0001', 'w')
             new.write('%\nO0001\n')
         else:
             new = open('1.PRG', 'w')
-        new.write('G54\n')
+        new.write(self.Gxx+'\n')
         new.write(self.Sxx+'M3\n')
         new.write('G0 '+self.Securite+'\n')
         new.write('G98\n')
         for point in self.points:
-            new.write(self.Gxx + 'X' + str(int(point.x)) + 'Y' + str(
+            if option=='fi':
+                new.write('G84')
+            elif option=='fo':
+                new.write('G83')
+            else:
+                new.write('G85')
+            new.write('X' + str(int(point.x)) + 'Y' + str(
                 int(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
         if (self.Fanuc):
             new.write('\n%')
 
+    def writeal(self):
+        option='al'
+        pass
+
+
     def writefo(self):
+        option='fo'
         self.__error4.clear()
 
         security = self.__champSecurite4.text()
@@ -531,9 +568,10 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
 
-        self.write()
+        self.write(option)
 
     def writefi(self):
+        option='fi'
         self.__error5.clear()
         self.Mx = self.combo.currentText()
         print(self.Mx)
@@ -566,10 +604,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         security = self.__champSecurite5.text()
         profondeur = self.__champProfondeur.text()
         r = self.__champR.text()
-        q = self.__champQ.text()
 
-
-        verif = [security, profondeur, r, q]
+        verif = [security, profondeur, r]
         for element in verif:
             if element == security:
                 if ',' in element:
@@ -626,36 +662,18 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__champR.clear()
                     return
 
-            if element == q:
-                if ',' in element:
-                    try:
-                        element = float(element.replace(',', '.'))
-                    except ValueError:
-                        self.__error5.setText('input deve essere un valore numerico')
-                        self.__champQ.clear()
-                        return
-                try:
-                    element = float(element)
-                except ValueError:
-                    self.__error5.setText('input deve essere un valore numerico')
-                    self.__champQ.clear()
-                    return
-                if element<0 or element>10000:
-                    self.__error5.setText('intervallo sbagliato per Q')
-                    self.__champQ.clear()
-                    return
 
 
 
         self.Securite = 'Z' + str(security)
         self.Profondeur = 'Z-' + str(profondeur)
-        self.Qxx = 'Q' + str(q)
+        self.Qxx = ''
         self.Rxx = 'R' + str(r)
         print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
 
 
 
-        self.write()
+        self.write(option)
 
 
 class Point():
