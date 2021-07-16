@@ -2,6 +2,8 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from matplotlib import numpy as np
 import sys
 import re
+import openpyxl
+from openpyxl import Workbook
 ##Fenetre utilisateur
 
 def parse_float(str_value):
@@ -128,6 +130,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget3.setLayout(layout3)
 
         ##layout 4 : pour les foraturia
+
+        try:
+            wb = openpyxl.load_workbook('Fatture.xlsx')
+            sheet1 = wb.active
+        except:
+            print('non')
+            return
+
+
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
         layout4.addWidget(self.__securite, 0, 0)
@@ -498,6 +509,13 @@ class MaFenetre(QtWidgets.QMainWindow):
         option='fo'
         self.__error4.clear()
 
+        try:
+            wb = openpyxl.load_workbook('Fatture.xlsx')
+            sheet1 = wb.active
+        except:
+            print('non')
+            return
+
         security = self.__champSecurite4.text()
         speed= self.__SxxInput.text()
         avanzamento=self.__FxxInput.text()
@@ -614,6 +632,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Qxx = 'Q' + str(q)
         self.Rxx = 'R' + str(r)
         print(self.Securite,self.Sxx,self.Fxx,self.Profondeur, self.Qxx,self.Rxx)
+
+
 
 
 
