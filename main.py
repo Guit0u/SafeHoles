@@ -4,6 +4,8 @@ import sys
 import re
 import openpyxl
 from openpyxl import Workbook
+
+
 ##Fenetre utilisateur
 
 def parse_float(str_value):
@@ -17,15 +19,15 @@ def parse_float(str_value):
     except ValueError:
         return float(str_value.lower().replace("d", "e"))
 
-class MaFenetre(QtWidgets.QMainWindow):
 
+class MaFenetre(QtWidgets.QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__()
 
         ##variables globales à la con
         self.points = []
-        self.infopoints= []
+        self.infopoints = []
         self.compteur = 0
         self.Fanuc = False
         self.Gxx = 'G'
@@ -35,29 +37,34 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Rxx = 'R0'
         self.Qxx = 'Q0'
         self.Securite = 'Z'
-        self.Profondeur='Z-0'
+        self.Profondeur = 'Z-0'
+        self.Diametre= ''
 
         ##layout1 : rentrer le fichier et le type de sortie
-        #self.boutonLire = QtWidgets.QPushButton("entrata")
+        # self.boutonLire = QtWidgets.QPushButton("entrata")
         self.__champTexte = QtWidgets.QLineEdit("")
         self.__champTexte.setPlaceholderText("esempio.igs")
-        self.__labelText = QtWidgets.QLabel("File")
+        self.__labelText = QtWidgets.QLabel("Inserisci il nome del file")
         self.__champSecurite = QtWidgets.QLineEdit("")
         self.__champSecurite.setPlaceholderText("42")
         self.__unite = QtWidgets.QLabel("Sicurezza (millimetri)")
         self.__error1 = QtWidgets.QLabel()
         self.__error11 = QtWidgets.QLabel()
         self.__error2 = QtWidgets.QLabel()
-
+        self.__nul = QtWidgets.QLabel()
+        self.__nul2 = QtWidgets.QLabel()
 
         layout1 = QtWidgets.QGridLayout()
-        layout1.addWidget(self.__champTexte,0,1)
-        #layout1.addWidget(self.boutonLire, 4,1)
-        #layout1.addWidget(self.__champSecurite,1,1)
-        #layout1.addWidget(self.__unite,1,0)
-        layout1.addWidget(self.__error1,0,5)
-        layout1.addWidget(self.__error11,1,5)
-        layout1.addWidget(self.__labelText, 0,0)
+        layout1.addWidget(self.__champTexte, 1, 1)
+        # layout1.addWidget(self.boutonLire, 4,1)
+        # layout1.addWidget(self.__champSecurite,1,1)
+        # layout1.addWidget(self.__unite,1,0)
+        self.__nul2.setText('Scegli il tipo di file di output')
+        layout1.addWidget(self.__nul, 3, 1)
+        layout1.addWidget(self.__nul2, 4, 1)
+        layout1.addWidget(self.__error1, 0, 5)
+        layout1.addWidget(self.__error11, 1, 5)
+        layout1.addWidget(self.__labelText, 0, 1)
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
 
@@ -65,15 +72,14 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
         self.boutonSchlong = QtWidgets.QPushButton("She hong")
-        layout1.addWidget(self.boutonFanuc, 3, 2)
-        layout1.addWidget(self.boutonSchlong, 3, 1)
+        layout1.addWidget(self.boutonFanuc, 5, 2)
+        layout1.addWidget(self.boutonSchlong, 5, 0)
 
         self.setCentralWidget(widget1)
 
         ##layout2 : avortée
         '''
         layout2 = QtWidgets.QGridLayout()
-
         self.__number = QtWidgets.QLabel('1')
         self.__trou = QtWidgets.QLabel('foro :')
         self.__coord = QtWidgets.QLabel('')
@@ -88,7 +94,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champRetrait = QtWidgets.QLineEdit("")
         self.__champRetrait.setPlaceholderText("5")
         self.__labelRetrait = QtWidgets.QLabel("Profondità (mm) :")
-
         layout2.addWidget(self.__champProfondeur, 1, 1)
         layout2.addWidget(self.__labelProfondeur,1,0)
         layout2.addWidget(self.__champVitesse,2,1)
@@ -101,12 +106,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout2.addWidget(self.__coord2, 0, 3)
         layout2.addWidget(self.__coord, 0, 4)
         layout2.addWidget(self.__error2, 4, 4)
-
-
         self.widget2=QtWidgets.QWidget()
         self.widget2.setLayout(layout2)
         '''
-
 
         ##layout3 : G et type de troue
 
@@ -121,8 +123,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__interval = QtWidgets.QLabel("Sistema di coordinate")
         layout3.addWidget(self.boutonForaturia, 1, 0)
         layout3.addWidget(self.boutonFillettatura, 1, 1)
-        layout3.addWidget(self.boutonAlesaggio,1,2)
-        layout3.addWidget(self.__GxxInput,0,1)
+        layout3.addWidget(self.boutonAlesaggio, 1, 2)
+        layout3.addWidget(self.__GxxInput, 0, 1)
         layout3.addWidget(self.__interval, 0, 0)
         layout3.addWidget(self.__error3, 0, 2)
 
@@ -131,7 +133,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         ##layout 4 : pour les foraturia
         try:
-            wb = openpyxl.load_workbook('1.xlsx')
+            wb = openpyxl.load_workbook('3.xlsx')
             sheet1 = wb.active
         except:
             print('non')
@@ -146,17 +148,17 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__error4 = QtWidgets.QLabel()
         layout4.addWidget(self.__error4, 0, 3)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
-        layout4.addWidget(self.boutonEntrata4, 7, 1)
+        layout4.addWidget(self.boutonEntrata4, 8, 1)
         self.__SxxInput = QtWidgets.QLineEdit("")
         self.__SxxInput.setPlaceholderText("650")
-        layout4.addWidget(self.__SxxInput,2,1)
+        layout4.addWidget(self.__SxxInput, 2, 1)
         self.__labelSxx = QtWidgets.QLabel("Speed(S) (t/s)")
-        layout4.addWidget(self.__labelSxx,2,0)
+        layout4.addWidget(self.__labelSxx, 2, 0)
         self.__FxxInput = QtWidgets.QLineEdit("")
         self.__FxxInput.setPlaceholderText("75")
-        layout4.addWidget(self.__FxxInput,3,1)
+        layout4.addWidget(self.__FxxInput, 3, 1)
         self.__labelFxx = QtWidgets.QLabel("Avanzamento(F) (mm)")
-        layout4.addWidget(self.__labelFxx,3,0)
+        layout4.addWidget(self.__labelFxx, 3, 0)
         self.__labelProfondeur4 = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur4 = QtWidgets.QLineEdit("")
         self.__champProfondeur4.setPlaceholderText("42")
@@ -173,13 +175,28 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout4.addWidget(self.__Q4, 6, 0)
         layout4.addWidget(self.__champQ4, 6, 1)
 
+        self.__diam4 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
+        self.__champdiam4 = QtWidgets.QLineEdit("")
+        self.__champdiam4.setPlaceholderText("42")
+        layout4.addWidget(self.__diam4, 7, 0)
+        layout4.addWidget(self.__champdiam4, 7, 1)
+
         self.diam = QtWidgets.QComboBox()
 
-        #RECHERCHE DES VALEURS DANS L'EXCEL
+        # RECHERCHE DES VALEURS DANS L'EXCEL
         for row in sheet1.rows:
-            if type(row[0].value)==int or type(row[0].value)==float:
+            print(row[0].value)
+            d = str(row[0].value).split('-')
+            print(d)
+            d = d[-1]
+            print(d)
+            try:
+                d=float(d)
+                print('bonsoir')
                 self.diam.addItem(str(row[0].value))
-
+                print('mé')
+            except:
+                pass
 
         self.metal = QtWidgets.QComboBox()
         self.metal.addItem('Alluminio')
@@ -191,12 +208,14 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.diamo = QtWidgets.QCheckBox('Altro foro')
         # self.cb.toggle()
         self.diamo.stateChanged.connect(self.newParameters2)
-        layout4.addWidget(self.diamo, 0,0 )
+        layout4.addWidget(self.diamo, 0, 0)
 
         self.__labelFxx.hide()
         self.__FxxInput.hide()
         self.__labelSxx.hide()
         self.__SxxInput.hide()
+        self.__champdiam4.hide()
+        self.__diam4.hide()
 
 
         self.widget4 = QtWidgets.QWidget()
@@ -219,12 +238,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.combo.addItem('M14')
         self.combo.addItem('M16')
         self.combo.addItem('M20')
-        layout5.addWidget(self.combo,0,1)
+        layout5.addWidget(self.combo, 0, 1)
 
         self.cb = QtWidgets.QCheckBox('Altro M')
-        #self.cb.toggle()
+        # self.cb.toggle()
         self.cb.stateChanged.connect(self.newParameters)
-        layout5.addWidget(self.cb,0,0)
+        layout5.addWidget(self.cb, 0, 0)
 
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
@@ -236,18 +255,21 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champR.setPlaceholderText("42")
         layout5.addWidget(self.__champR, 5, 1)
         layout5.addWidget(self.__R, 5, 0)
-
-
+        self.__diam5 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
+        self.__champdiam5 = QtWidgets.QLineEdit("")
+        self.__champdiam5.setPlaceholderText("42")
+        layout5.addWidget(self.__diam5, 7, 0)
+        layout5.addWidget(self.__champdiam5, 7, 1)
         self.__error5 = QtWidgets.QLabel()
         layout5.addWidget(self.__error5, 1, 5)
 
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
-        layout5.addWidget(self.boutonEntrata5, 7, 1)
+        layout5.addWidget(self.boutonEntrata5, 8, 1)
 
         self.widget5 = QtWidgets.QWidget()
         self.widget5.setLayout(layout5)
 
-        #params supplémentaires pour M personnalisé
+        # params supplémentaires pour M personnalisé
 
         self.__labelNewSxx = QtWidgets.QLabel("Speed (t/m) :")
         self.__champNewSxx = QtWidgets.QLineEdit("")
@@ -267,21 +289,10 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__labelNewFxx.hide()
         self.__champNewFxx.hide()
 
-
         ##layout6 : alesage
         layout6 = QtWidgets.QGridLayout()
         self.widget6 = QtWidgets.QWidget()
         self.widget6.setLayout(layout6)
-
-
-
-
-
-
-
-
-
-
 
         ##appel de fonction
 
@@ -292,9 +303,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.boutonAlesaggio.clicked.connect(self.alesaggio)
         self.boutonEntrata5.clicked.connect(self.writefi)
         self.boutonEntrata4.clicked.connect(self.writefo)
-        #self.boutonLire.clicked.connect(self.read)
-        #self.boutonLire2.clicked.connect(self.FtoPayRespects)
-        #self.boutonSecurite.clicked.connect(self.prof)
+        # self.boutonLire.clicked.connect(self.read)
+        # self.boutonLire2.clicked.connect(self.FtoPayRespects)
+        # self.boutonSecurite.clicked.connect(self.prof)
 
         wb.close()
 
@@ -302,7 +313,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def testGxx(self):
         input = self.__GxxInput.text()
-        test = re.findall("^G5[4-9]$",input)
+        test = re.findall("^G5[4-9]$", input)
         if test:
             self.Gxx = self.__GxxInput.text()
             return True
@@ -313,7 +324,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             return False
 
     def newParameters(self):
-        if(self.combo.count()==8):
+        if (self.combo.count() == 8):
             self.combo.addItem('Altro M')
             self.combo.setCurrentIndex(8)
             for i in range(8):
@@ -338,29 +349,39 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__labelNewFxx.hide()
             self.__champNewFxx.hide()
 
-
-
     def newParameters2(self):
-        if(self.diam.count()>1):
+        if (self.diam.count() > 1):
             self.diam.addItem('Altro')
-            self.diam.setCurrentIndex(self.diam.count()-1)
-            for diam in range(self.diam.count()-1):
+            self.diam.setCurrentIndex(self.diam.count() - 1)
+            for diam in range(self.diam.count() - 1):
                 self.diam.removeItem(0)
             self.__labelFxx.show()
             self.__FxxInput.show()
             self.__labelSxx.show()
             self.__SxxInput.show()
             self.metal.hide()
+            self.__champdiam4.show()
+            self.__diam4.show()
 
         else:
+            try:
+                wb = openpyxl.load_workbook('3.xlsx')
+                sheet1 = wb.active
+            except:
+                print('non')
+                return
             self.diam.removeItem(0)
-            self.diam.addItem('test1')
-            self.diam.addItem('test2')
+            for row in sheet1.rows:
+                if type(row[0].value) == int or type(row[0].value) == float:
+                    self.diam.addItem(str(row[0].value))
             self.__labelFxx.hide()
             self.__FxxInput.hide()
             self.__labelSxx.hide()
             self.__SxxInput.hide()
             self.metal.show()
+            self.__champdiam4.hide()
+            self.__diam4.hide()
+            wb.close()
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -380,20 +401,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.setCentralWidget(self.widget6)
 
     def fanuc(self):
-        self.Fanuc=True
+        self.Fanuc = True
         self.read()
-
-
-
-
-
 
     def read(self):
         self.__error1.clear()
         filename = self.__champTexte.text()
 
         try:
-            with open(filename,'r') as f:
+            with open(filename, 'r') as f:
 
                 param_string = ''
                 entity_index = 0
@@ -464,7 +480,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                             first_param_line = True
                             param_string = param_string.strip()[:-1]
                             parameters = param_string.split(param_sep)
-                            pt=self.points[pointer_dict[directory_pointer]]
+                            pt = self.points[pointer_dict[directory_pointer]]
                             pt._add_parameters(parameters)
                             zref = self.points[0].coordinate[2]
                             if pt.coordinate[2] != zref:
@@ -475,27 +491,25 @@ class MaFenetre(QtWidgets.QMainWindow):
                         for e in self.points:
                             print()
 
-
             self.setCentralWidget(self.widget3)
-            #self.__coord.setText(str(self.points[0].coordinate))
+            # self.__coord.setText(str(self.points[0].coordinate))
         except FileNotFoundError:
             self.__error1.setText('Il file non esiste')
             self.__champTexte.clear()
             return
 
-
     def FtoPayRespects(self):
 
-        if self.compteur<len(self.points):
+        if self.compteur < len(self.points):
             self.compteur += 1
             info = self.__champProfondeur.text()
             info2 = self.__champVitesse.text()
             info3 = self.__champRetrait.text()
             if ',' in info or ',' in info2 or ',' in info3:
                 try:
-                    info=float(info.replace(',', '.'))
-                    info2=float(info2.replace(',', '.'))
-                    info3=float(info3.replace(',', '.'))
+                    info = float(info.replace(',', '.'))
+                    info2 = float(info2.replace(',', '.'))
+                    info3 = float(info3.replace(',', '.'))
                 except ValueError:
                     self.__error2.setText('input deve essere un valore numerico')
                     self.__champProfondeur.clear()
@@ -504,7 +518,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.compteur -= 1
                     return
             try:
-                info=float(info)
+                info = float(info)
                 info2 = float(info2)
                 info3 = float(info3)
             except ValueError:
@@ -512,34 +526,32 @@ class MaFenetre(QtWidgets.QMainWindow):
                 self.__champProfondeur.clear()
                 self.__champVitesse.clear()
                 self.__champRetrait.clear()
-                self.compteur-=1
+                self.compteur -= 1
                 return
             self.__champProfondeur.clear()
             self.__champVitesse.clear()
             self.__champRetrait.clear()
-            self.infopoints.append([info,info2,info3])
-            if self.compteur<len(self.points):
-                self.__number.setText(str(self.compteur+1))
+            self.infopoints.append([info, info2, info3])
+            if self.compteur < len(self.points):
+                self.__number.setText(str(self.compteur + 1))
                 self.__coord.setText(str(self.points[self.compteur].coordinate))
-            if self.compteur==len(self.points):
+            if self.compteur == len(self.points):
                 self.setCentralWidget(self.widget3)
 
-
-
-    def write(self,option):
+    def write(self, option):
         if self.Fanuc:
             new = open('O0001', 'w')
             new.write('%\nO0001\n')
         else:
             new = open('1.PRG', 'w')
-        new.write(self.Gxx+'\n')
-        new.write(self.Sxx+'M3\n')
-        new.write('G0 '+self.Securite+'\n')
+        new.write(self.Gxx + '\n')
+        new.write(self.Sxx + 'M3\n')
+        new.write('G0 ' + self.Securite + '\n')
         new.write('G98\n')
         for point in self.points:
-            if option=='fi':
+            if option == 'fi':
                 new.write('G84')
-            elif option=='fo':
+            elif option == 'fo':
                 new.write('G83')
             else:
                 new.write('G85')
@@ -550,26 +562,28 @@ class MaFenetre(QtWidgets.QMainWindow):
             new.write('\n%')
 
     def writeal(self):
-        option='al'
+        option = 'al'
         pass
 
-
     def writefo(self):
-        option='fo'
+        option = 'fo'
         self.__error4.clear()
 
         try:
-            wb = openpyxl.load_workbook('1.xlsx')
+            wb = openpyxl.load_workbook('3.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
-        if self.diam.currentText()=='Altro':
+        if self.diam.currentText() == 'Altro':
             pass
         else:
             for row in sheet1.rows:
-                if str(str(row[0].value))==self.diam.currentText():
-                    if self.metal.currentText()=='Alluminio':
+                diam=str(row[0].value).split('-')
+                diam=diam[-1]
+                if str(str(row[0].value)) == self.diam.currentText():
+                    self.__champdiam4.setText(diam)
+                    if self.metal.currentText() == 'Alluminio':
                         self.__SxxInput.setText(str(row[1].value))
                         self.__FxxInput.setText(str(row[2].value))
                     else:
@@ -577,12 +591,25 @@ class MaFenetre(QtWidgets.QMainWindow):
                         self.__FxxInput.setText(str(row[4].value))
 
         security = self.__champSecurite4.text()
-        speed= self.__SxxInput.text()
-        avanzamento=self.__FxxInput.text()
-        profondeur=self.__champProfondeur4.text()
-        r=self.__champR4.text()
-        q=self.__champQ4.text()
-        verif=[security,speed,avanzamento,profondeur,r,q]
+        diametre=self.__champdiam4.text()
+        speed = self.__SxxInput.text()
+        avanzamento = self.__FxxInput.text()
+        profondeur = self.__champProfondeur4.text()
+        r = self.__champR4.text()
+        q = self.__champQ4.text()
+        verif = [security, speed, avanzamento, profondeur, r, q]
+
+
+        for point1 in self.points:
+            compt = 0
+            for point2 in self.points:
+                if ((float(point1.coordinate[0])-float(point2.coordinate[0]))**2+(float(point1.coordinate[1])-float(point2.coordinate[1]))**2)**1/2<float(diametre)+1:
+                    compt+=1
+            if compt>1:
+                self.__error4.setText('due punti o due fori si sovrappongono')
+                return
+
+
 
         for element in verif:
             if element == security:
@@ -658,7 +685,6 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per Q')
                     self.__champQ4.clear()
                     return
-        
 
             if element == speed:
                 try:
@@ -684,49 +710,43 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__champQ4.clear()
                     return
 
-
         self.Securite = 'Z' + str(security)
         self.Sxx = 'S' + str(speed)
         self.Fxx = 'F' + str(avanzamento)
         self.Profondeur = 'Z-' + str(profondeur)
         self.Qxx = 'Q' + str(q)
         self.Rxx = 'R' + str(r)
-        print(self.Securite,self.Sxx,self.Fxx,self.Profondeur, self.Qxx,self.Rxx)
-
-
-
-
+        print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
 
         self.write(option)
 
         wb.close()
 
-
     def writefi(self):
-        option='fi'
+        option = 'fi'
         self.__error5.clear()
         self.Mx = self.combo.currentText()
         print(self.Mx)
 
-        if self.Mx=='M5':
+        if self.Mx == 'M5':
             self.Sxx = 'S50'
             self.Fxx = 'F40'
-        elif self.Mx=='M6':
+        elif self.Mx == 'M6':
             self.Sxx = 'S50'
             self.Fxx = 'F50'
-        elif self.Mx=='M8':
+        elif self.Mx == 'M8':
             self.Sxx = 'S60'
             self.Fxx = 'F75'
-        elif self.Mx=='M10':
+        elif self.Mx == 'M10':
             self.Sxx = 'S50'
             self.Fxx = 'F75'
-        elif self.Mx=='M12':
+        elif self.Mx == 'M12':
             self.Sxx = 'S40'
             self.Fxx = 'F70'
-        elif self.Mx=='M14' or self.Mx=='M16':
+        elif self.Mx == 'M14' or self.Mx == 'M16':
             self.Sxx = 'S50'
             self.Fxx = 'F100'
-        elif self.Mx=='M20':
+        elif self.Mx == 'M20':
             self.Sxx = 'S50'
             self.Fxx = 'F125'
         else:
@@ -761,6 +781,16 @@ class MaFenetre(QtWidgets.QMainWindow):
         security = self.__champSecurite5.text()
         profondeur = self.__champProfondeur.text()
         r = self.__champR.text()
+        diametre=self.__champdiam5.text()
+
+        for point1 in self.points:
+            compt = 0
+            for point2 in self.points:
+                if ((float(point1.coordinate[0])-float(point2.coordinate[0]))**2+(float(point1.coordinate[1])-float(point2.coordinate[1]))**2)**1/2<float(diametre)+1:
+                    compt+=1
+            if compt>1:
+                self.__error5.setText('due punti o due fori si sovrappongono')
+                return
 
         verif = [security, profondeur, r]
         for element in verif:
@@ -778,7 +808,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champSecurite5.clear()
                     return
-                if element<0 or element>10000:
+                if element < 0 or element > 10000:
                     self.__error5.setText('intervallo sbagliato per la sicurezza')
                     self.__champSecurite5.clear()
                     return
@@ -796,7 +826,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champProfondeur.clear()
                     return
-                if element<0 or element>10000:
+                if element < 0 or element > 10000:
                     self.__error5.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur.clear()
                     return
@@ -814,21 +844,16 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champR.clear()
                     return
-                if element<0 or element>10000:
+                if element < 0 or element > 10000:
                     self.__error5.setText('intervallo sbagliato per la quota di avvicimento')
                     self.__champR.clear()
                     return
-
-
-
 
         self.Securite = 'Z' + str(security)
         self.Profondeur = 'Z-' + str(profondeur)
         self.Qxx = ''
         self.Rxx = 'R' + str(r)
         print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
-
-
 
         self.write(option)
 
