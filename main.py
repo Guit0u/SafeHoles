@@ -130,16 +130,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget3.setLayout(layout3)
 
         ##layout 4 : pour les foraturia
-        '''
+        try:
+            wb = openpyxl.load_workbook('2.xlsx')
+            sheet1 = wb.active
+        except:
+            print('non')
+            return
 
-        wb = openpyxl.load_workbook('Classeur 1.xlsx')
-        sheet1 = wb.active
-        '''
 
-        print(sheet1.max_row)
-        print(sheet1.max_column)
 
-        wb.close()
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
         layout4.addWidget(self.__securite, 1, 0)
@@ -177,8 +176,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout4.addWidget(self.__champQ4, 6, 1)
 
         self.diam = QtWidgets.QComboBox()
-        self.diam.addItem('test1')
-        self.diam.addItem('test2')
+
+        #RECHERCHE DES VALEURS DANS L'EXCEL
+        for row in sheet1.rows:
+            if type(row[0].value)==int or type(row[0].value)==float:
+                self.diam.addItem(str(row[0].value))
+
 
         self.metal = QtWidgets.QComboBox()
         self.metal.addItem('Alluminio')
@@ -197,7 +200,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__labelSxx.hide()
         self.__SxxInput.hide()
 
-        self.diamXX = 3
 
         self.widget4 = QtWidgets.QWidget()
         self.widget4.setLayout(layout4)
@@ -390,7 +392,7 @@ class MaFenetre(QtWidgets.QMainWindow):
     def read(self):
         self.__error1.clear()
         filename = self.__champTexte.text()
-        alu=False
+
         try:
             with open(filename,'r') as f:
 
@@ -481,15 +483,6 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error1.setText('Il file non esiste')
             self.__champTexte.clear()
             return
-        for row in sheet1.rows:
-            if(row[0].value==self.diamXX):
-                if(alu):
-                    print(row[1].value)
-                    print(row[2].value)
-                else:
-                    print(row[3].value)
-                    print(row[4].value)
-
 
 
     def FtoPayRespects(self):
@@ -566,14 +559,20 @@ class MaFenetre(QtWidgets.QMainWindow):
         option='fo'
         self.__error4.clear()
 
-        '''
         try:
-            wb = openpyxl.load_workbook('Classeur 1.xlsx')
+            wb = openpyxl.load_workbook('2.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
-        '''
+
+        for row in sheet1.rows:
+            if str(str(row[0].value))==self.diam.currentText():
+                if self.metal.currentText()=='Alluminio':
+                    print(row[1].value)
+                    print('wsh')
+                else:
+                    print(row[2].value)
 
         security = self.__champSecurite4.text()
         speed= self.__SxxInput.text()
@@ -582,7 +581,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         r=self.__champR4.text()
         q=self.__champQ4.text()
         verif=[security,speed,avanzamento,profondeur,r,q]
-
+        '''
         for element in verif:
             if element == security:
                 if ',' in element:
@@ -657,7 +656,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per Q')
                     self.__champQ4.clear()
                     return
-
+        
 
             if element == speed:
                 try:
@@ -682,7 +681,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per la avanzamento')
                     self.__champQ4.clear()
                     return
-
+        '''
 
         self.Securite = 'Z' + str(security)
         self.Sxx = 'S' + str(speed)
