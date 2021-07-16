@@ -59,6 +59,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         widget1 = QtWidgets.QWidget()
         widget1.setLayout(layout1)
 
+        self.__labelFanuc = QtWidgets.QLabel("Selezionare il tipo di file")
+
         self.boutonFanuc = QtWidgets.QPushButton("Fanuc")
         self.boutonSchlong = QtWidgets.QPushButton("She hong")
         layout1.addWidget(self.boutonFanuc, 3, 2)
@@ -114,7 +116,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
         self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
         self.boutonAlesaggio = QtWidgets.QPushButton("Alesaggio")
-        self.__interval = QtWidgets.QLabel("da G25 a G1000")
+        self.__interval = QtWidgets.QLabel("Sistema di coordinate")
         layout3.addWidget(self.boutonForaturia, 1, 0)
         layout3.addWidget(self.boutonFillettatura, 1, 1)
         layout3.addWidget(self.boutonAlesaggio,1,2)
@@ -264,7 +266,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def testGxx(self):
         input = self.__GxxInput.text()
-        test = re.findall("^G\d\d$",input)
+        test = re.findall("^G5[4-9]$",input)
         if test:
             self.Gxx = self.__GxxInput.text()
             return True
