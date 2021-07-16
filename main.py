@@ -131,15 +131,15 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         ##layout 4 : pour les foraturia
         '''
-        try:
-            wb = openpyxl.load_workbook('Fatture.xlsx')
-            sheet1 = wb.active
-        except:
-            print('non')
-            return
+
+        wb = openpyxl.load_workbook('Classeur 1.xlsx')
+        sheet1 = wb.active
         '''
 
+        print(sheet1.max_row)
+        print(sheet1.max_column)
 
+        wb.close()
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
         layout4.addWidget(self.__securite, 1, 0)
@@ -197,6 +197,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__labelSxx.hide()
         self.__SxxInput.hide()
 
+        self.diamXX = 3
 
         self.widget4 = QtWidgets.QWidget()
         self.widget4.setLayout(layout4)
@@ -389,7 +390,7 @@ class MaFenetre(QtWidgets.QMainWindow):
     def read(self):
         self.__error1.clear()
         filename = self.__champTexte.text()
-
+        alu=False
         try:
             with open(filename,'r') as f:
 
@@ -480,6 +481,15 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error1.setText('Il file non esiste')
             self.__champTexte.clear()
             return
+        for row in sheet1.rows:
+            if(row[0].value==self.diamXX):
+                if(alu):
+                    print(row[1].value)
+                    print(row[2].value)
+                else:
+                    print(row[3].value)
+                    print(row[4].value)
+
 
 
     def FtoPayRespects(self):
@@ -555,9 +565,10 @@ class MaFenetre(QtWidgets.QMainWindow):
     def writefo(self):
         option='fo'
         self.__error4.clear()
+
         '''
         try:
-            wb = openpyxl.load_workbook('Fatture.xlsx')
+            wb = openpyxl.load_workbook('Classeur 1.xlsx')
             sheet1 = wb.active
         except:
             print('non')
