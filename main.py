@@ -130,50 +130,72 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.widget3.setLayout(layout3)
 
         ##layout 4 : pour les foraturia
-
+        '''
         try:
             wb = openpyxl.load_workbook('Fatture.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
+        '''
 
 
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
-        layout4.addWidget(self.__securite, 0, 0)
+        layout4.addWidget(self.__securite, 1, 0)
         self.__champSecurite4 = QtWidgets.QLineEdit("")
         self.__champSecurite4.setPlaceholderText("100")
-        layout4.addWidget(self.__champSecurite4, 0, 1)
+        layout4.addWidget(self.__champSecurite4, 1, 1)
         self.__error4 = QtWidgets.QLabel()
         layout4.addWidget(self.__error4, 0, 3)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
-        layout4.addWidget(self.boutonEntrata4, 4, 3)
+        layout4.addWidget(self.boutonEntrata4, 7, 1)
         self.__SxxInput = QtWidgets.QLineEdit("")
         self.__SxxInput.setPlaceholderText("650")
-        layout4.addWidget(self.__SxxInput,1,1)
+        layout4.addWidget(self.__SxxInput,2,1)
         self.__labelSxx = QtWidgets.QLabel("Speed(S) (t/s)")
-        layout4.addWidget(self.__labelSxx,1,0)
+        layout4.addWidget(self.__labelSxx,2,0)
         self.__FxxInput = QtWidgets.QLineEdit("")
         self.__FxxInput.setPlaceholderText("75")
-        layout4.addWidget(self.__FxxInput,2,1)
+        layout4.addWidget(self.__FxxInput,3,1)
         self.__labelFxx = QtWidgets.QLabel("Avanzamento(F) (mm)")
-        layout4.addWidget(self.__labelFxx,2,0)
+        layout4.addWidget(self.__labelFxx,3,0)
         self.__labelProfondeur4 = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur4 = QtWidgets.QLineEdit("")
         self.__champProfondeur4.setPlaceholderText("42")
-        layout4.addWidget(self.__labelProfondeur4, 3, 0)
-        layout4.addWidget(self.__champProfondeur4, 3, 1)
+        layout4.addWidget(self.__labelProfondeur4, 4, 0)
+        layout4.addWidget(self.__champProfondeur4, 4, 1)
         self.__R4 = QtWidgets.QLabel("quota di avvicimento (R) (mm) :")
         self.__champR4 = QtWidgets.QLineEdit("")
         self.__champR4.setPlaceholderText("42")
-        layout4.addWidget(self.__champR4, 4, 1)
-        layout4.addWidget(self.__R4, 4, 0)
+        layout4.addWidget(self.__champR4, 5, 1)
+        layout4.addWidget(self.__R4, 5, 0)
         self.__Q4 = QtWidgets.QLabel("Q (mm) :")
         self.__champQ4 = QtWidgets.QLineEdit("")
         self.__champQ4.setPlaceholderText("42")
-        layout4.addWidget(self.__Q4, 5, 0)
-        layout4.addWidget(self.__champQ4, 5, 1)
+        layout4.addWidget(self.__Q4, 6, 0)
+        layout4.addWidget(self.__champQ4, 6, 1)
+
+        self.diam = QtWidgets.QComboBox()
+        self.diam.addItem('test1')
+        self.diam.addItem('test2')
+
+        self.metal = QtWidgets.QComboBox()
+        self.metal.addItem('Alluminio')
+        self.metal.addItem('Acciaio')
+
+        layout4.addWidget(self.diam, 0, 1)
+        layout4.addWidget(self.metal, 0, 2)
+
+        self.diamo = QtWidgets.QCheckBox('Altro foro')
+        # self.cb.toggle()
+        self.diamo.stateChanged.connect(self.newParameters2)
+        layout4.addWidget(self.diamo, 0,0 )
+
+        self.__labelFxx.hide()
+        self.__FxxInput.hide()
+        self.__labelSxx.hide()
+        self.__SxxInput.hide()
 
 
         self.widget4 = QtWidgets.QWidget()
@@ -244,6 +266,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__labelNewFxx.hide()
         self.__champNewFxx.hide()
 
+
         ##layout6 : alesage
         layout6 = QtWidgets.QGridLayout()
         self.widget6 = QtWidgets.QWidget()
@@ -312,6 +335,30 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__champNewSxx.hide()
             self.__labelNewFxx.hide()
             self.__champNewFxx.hide()
+
+
+
+    def newParameters2(self):
+        if(self.diam.count()>1):
+            self.diam.addItem('Altro')
+            self.diam.setCurrentIndex(self.diam.count()-1)
+            for diam in range(self.diam.count()-1):
+                self.diam.removeItem(0)
+            self.__labelFxx.show()
+            self.__FxxInput.show()
+            self.__labelSxx.show()
+            self.__SxxInput.show()
+            self.metal.hide()
+
+        else:
+            self.diam.removeItem(0)
+            self.diam.addItem('test1')
+            self.diam.addItem('test2')
+            self.__labelFxx.hide()
+            self.__FxxInput.hide()
+            self.__labelSxx.hide()
+            self.__SxxInput.hide()
+            self.metal.show()
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -508,13 +555,14 @@ class MaFenetre(QtWidgets.QMainWindow):
     def writefo(self):
         option='fo'
         self.__error4.clear()
-
+        '''
         try:
             wb = openpyxl.load_workbook('Fatture.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
+        '''
 
         security = self.__champSecurite4.text()
         speed= self.__SxxInput.text()
