@@ -131,13 +131,11 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         ##layout 4 : pour les foraturia
         try:
-            wb = openpyxl.load_workbook('2.xlsx')
+            wb = openpyxl.load_workbook('1.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
-
-
 
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
@@ -298,6 +296,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         #self.boutonLire2.clicked.connect(self.FtoPayRespects)
         #self.boutonSecurite.clicked.connect(self.prof)
 
+        wb.close()
 
     ##les fonctions
 
@@ -560,19 +559,22 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__error4.clear()
 
         try:
-            wb = openpyxl.load_workbook('2.xlsx')
+            wb = openpyxl.load_workbook('1.xlsx')
             sheet1 = wb.active
         except:
             print('non')
             return
-
-        for row in sheet1.rows:
-            if str(str(row[0].value))==self.diam.currentText():
-                if self.metal.currentText()=='Alluminio':
-                    print(row[1].value)
-                    print('wsh')
-                else:
-                    print(row[2].value)
+        if self.diam.currentText()=='Altro':
+            pass
+        else:
+            for row in sheet1.rows:
+                if str(str(row[0].value))==self.diam.currentText():
+                    if self.metal.currentText()=='Alluminio':
+                        self.__SxxInput.setText(str(row[1].value))
+                        self.__FxxInput.setText(str(row[2].value))
+                    else:
+                        self.__SxxInput.setText(str(row[3].value))
+                        self.__FxxInput.setText(str(row[4].value))
 
         security = self.__champSecurite4.text()
         speed= self.__SxxInput.text()
@@ -581,7 +583,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         r=self.__champR4.text()
         q=self.__champQ4.text()
         verif=[security,speed,avanzamento,profondeur,r,q]
-        '''
+
         for element in verif:
             if element == security:
                 if ',' in element:
@@ -681,7 +683,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per la avanzamento')
                     self.__champQ4.clear()
                     return
-        '''
+
 
         self.Securite = 'Z' + str(security)
         self.Sxx = 'S' + str(speed)
@@ -695,9 +697,10 @@ class MaFenetre(QtWidgets.QMainWindow):
 
 
 
-
-
         self.write(option)
+
+        wb.close()
+
 
     def writefi(self):
         option='fi'
