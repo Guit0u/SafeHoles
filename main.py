@@ -154,15 +154,15 @@ class MaFenetre(QtWidgets.QMainWindow):
             fileDir = os.getcwd()
             fileExt = r"*.xlsx"
             dir=list(pathlib.Path(fileDir).glob(fileExt))[0]
-            wb = openpyxl.load_workbook(dir)
+            wb = openpyxl.load_workbook(str(dir))
             sheet1 = wb.active
         except:
 
             try:
                 fileDir = os.getcwd()
                 fileExt = r"*.xls"
-                dir = list(pathlib.Path(fileDir).glob(fileExt))[1]
-                wb = openpyxl.load_workbook(dir)
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+                wb = openpyxl.load_workbook(str(dir))
                 sheet1 = wb.active
 
             except:
@@ -208,13 +208,13 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__diam4 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
         self.__champdiam4 = QtWidgets.QLineEdit("")
         self.__champdiam4.setPlaceholderText("42")
-        layout4.addWidget(self.__diam4, 7, 0)
-        layout4.addWidget(self.__champdiam4, 7, 1)
+        layout4.addWidget(self.__diam4, 0, 1)
+        layout4.addWidget(self.__champdiam4, 0, 2)
 
-        self.diam = QtWidgets.QComboBox()
+        #self.diam = QtWidgets.QComboBox()
 
         # RECHERCHE DES VALEURS DANS L'EXCEL
-        for row in sheet1.rows:
+        '''  for row in sheet1.rows:
             print(row[0].value)
             d = str(row[0].value).split('-')
             print(d)
@@ -227,13 +227,13 @@ class MaFenetre(QtWidgets.QMainWindow):
                 print('mé')
             except:
                 pass
-
+        '''
         self.metal = QtWidgets.QComboBox()
         self.metal.addItem('Alluminio')
         self.metal.addItem('Acciaio')
 
-        layout4.addWidget(self.diam, 0, 1)
-        layout4.addWidget(self.metal, 0, 2)
+        #layout4.addWidget(self.diam, 0, 1)
+        layout4.addWidget(self.metal, 0, 3)
 
         self.diamo = QtWidgets.QCheckBox('Altro foro')
         # self.cb.toggle()
@@ -244,8 +244,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__FxxInput.hide()
         self.__labelSxx.hide()
         self.__SxxInput.hide()
-        self.__champdiam4.hide()
-        self.__diam4.hide()
+        #self.__champdiam4.hide()
+        #self.__diam4.hide()
 
 
         self.widget4 = QtWidgets.QWidget()
@@ -342,6 +342,38 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     ##les fonctions
 
+    def rechercheIntervalle(self,diametre):
+        try:
+            wb = openpyxl.load_workbook('3.xlsx')
+            sheet1 = wb.active
+        except:
+            print('non')
+            return
+
+        for row in sheet1.rows:
+               diam=str(row[0].value).split('-')
+               print(diam)
+               try:
+                   haut = float(diam[-1])
+                   bas = float(diam[0])
+                   print(str(haut) +'et bas vaut '+str(bas))
+                   if bas<=float(diametre)<haut:
+                       print('yay')
+                       if self.metal.currentText() == 'Alluminio':
+                           self.__SxxInput.setText(str(row[1].value))
+                           self.__FxxInput.setText(str(row[2].value))
+                           wb.close()
+                           return
+                       else:
+                           self.__SxxInput.setText(str(row[3].value))
+                           self.__FxxInput.setText(str(row[4].value))
+                           wb.close()
+                           return
+               except:
+                   pass
+        wb.close()
+
+
     def choix(self):
         root = tk.Tk()
         root.withdraw()  # pour ne pas afficher la fenêtre Tk
@@ -393,7 +425,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__champNewFxx.hide()
 
     def newParameters2(self):
-        if (self.diam.count() > 1):
+       ''' if (self.diam.count() > 1):
             self.diam.addItem('Altro')
             self.diam.setCurrentIndex(self.diam.count() - 1)
             for diam in range(self.diam.count() - 1):
@@ -437,6 +469,24 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__champdiam4.hide()
             self.__diam4.hide()
             wb.close()
+            '''
+       if(self.diamo.isChecked()):
+            self.__labelFxx.show()
+            self.__FxxInput.show()
+            self.__labelSxx.show()
+            self.__SxxInput.show()
+            self.metal.hide()
+       else:
+           self.__labelFxx.hide()
+           self.__FxxInput.hide()
+           self.__labelSxx.hide()
+           self.__SxxInput.hide()
+
+           self.__FxxInput.clear()
+           self.__SxxInput.clear()
+
+           self.metal.show()
+
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -627,24 +677,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         option = 'fo'
         self.__error4.clear()
 
-        try:
-            fileDir = os.getcwd()
-            fileExt = r"*.xlsx"
-            dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
-            wb = openpyxl.load_workbook(dir)
+        '''try:
+            wb = openpyxl.load_workbook('3.xlsx')
             sheet1 = wb.active
         except:
-
-            try:
-                fileDir = os.getcwd()
-                fileExt = r"*.xls"
-                dir = list(pathlib.Path(fileDir).glob(fileExt))[1]
-                wb = openpyxl.load_workbook(dir)
-                sheet1 = wb.active
-
-            except:
-                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
-                return
+            print('non')
+            return
         if self.diam.currentText() == 'Altro':
             pass
         else:
@@ -659,9 +697,12 @@ class MaFenetre(QtWidgets.QMainWindow):
                     else:
                         self.__SxxInput.setText(str(row[3].value))
                         self.__FxxInput.setText(str(row[4].value))
+        '''
+        diametre = self.__champdiam4.text()
+        self.rechercheIntervalle(diametre)
+
 
         security = self.__champSecurite4.text()
-        diametre=self.__champdiam4.text()
         speed = self.__SxxInput.text()
         avanzamento = self.__FxxInput.text()
         profondeur = self.__champProfondeur4.text()
@@ -793,7 +834,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         except:
             return
 
-        wb.close()
         self.setCentralWidget(self.widget7)
 
 
