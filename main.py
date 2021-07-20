@@ -153,7 +153,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         try:
             fileDir = os.getcwd()
             fileExt = r"*.xlsx"
-            dir=list(pathlib.Path(fileDir).glob(fileExt))[1]
+            dir=list(pathlib.Path(fileDir).glob(fileExt))[0]
             wb = openpyxl.load_workbook(dir)
             sheet1 = wb.active
         except:
@@ -166,7 +166,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 sheet1 = wb.active
 
             except:
-                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx')
+                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
                 return
 
         layout4 = QtWidgets.QGridLayout()
