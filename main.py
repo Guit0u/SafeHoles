@@ -6,6 +6,9 @@ import openpyxl
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from openpyxl import Workbook
+import glob
+import os
+import pathlib
 
 
 ##Fenetre utilisateur
@@ -73,7 +76,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         # layout1.addWidget(self.__champSecurite,1,1)
         # layout1.addWidget(self.__unite,1,0)
         self.__nul2.setText('Scegli il tipo di file di output')
-        layout1.addWidget(self.__nul, 3, 1)
+        layout1.addWidget(self.__nul, 8, 1)
         layout1.addWidget(self.__buttonChoix,1,1)
         layout1.addWidget(self.__buttonChoixLabel,2,1)
         layout1.addWidget(self.__nul2, 4, 1)
@@ -148,11 +151,23 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         ##layout 4 : pour les foraturia
         try:
-            wb = openpyxl.load_workbook('3.xlsx')
+            fileDir = os.getcwd()
+            fileExt = r"*.xlsx"
+            dir=list(pathlib.Path(fileDir).glob(fileExt))[1]
+            wb = openpyxl.load_workbook(dir)
             sheet1 = wb.active
         except:
-            print('non')
-            return
+
+            try:
+                fileDir = os.getcwd()
+                fileExt = r"*.xls"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[1]
+                wb = openpyxl.load_workbook(dir)
+                sheet1 = wb.active
+
+            except:
+                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx')
+                return
 
         layout4 = QtWidgets.QGridLayout()
         self.__securite = QtWidgets.QLabel('z di sicurezza')
