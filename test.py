@@ -9,7 +9,7 @@ def parse_float(str_value):
     float() function. In addition to "normal" numbers it also handles
     numbers such as 1.2D3 (equivalent to 1.2E3)
     """
-    try:
+    try:zz
         return float(str_value)
     except ValueError:
         return float(str_value.lower().replace("d", "e"))
