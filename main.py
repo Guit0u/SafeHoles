@@ -128,7 +128,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         ##layout3 : G et type de troue
 
         layout3 = QtWidgets.QGridLayout()
-        self.__GxxInput = QtWidgets.QLineEdit('')
+        self.__GxxInput = QtWidgets.QLineEdit('G54')
         self.__GxxInput.setPlaceholderText("G54")
         self.__error3 = QtWidgets.QLabel('')
 
@@ -333,7 +333,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.chosenFile = askopenfilename()
         if not'.igs' in self.chosenFile:
-            self.__nul.setText("NON. PAS DAKOR.")
+            self.__nul.setText("il file non e .igs")
             self.chosenFile=''
             return
         self.__buttonChoixLabel.setText('File : '+self.chosenFile)
