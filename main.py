@@ -408,11 +408,23 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         else:
             try:
-                wb = openpyxl.load_workbook('3.xlsx')
+                fileDir = os.getcwd()
+                fileExt = r"*.xlsx"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+                wb = openpyxl.load_workbook(dir)
                 sheet1 = wb.active
             except:
-                print('non')
-                return
+
+                try:
+                    fileDir = os.getcwd()
+                    fileExt = r"*.xls"
+                    dir = list(pathlib.Path(fileDir).glob(fileExt))[1]
+                    wb = openpyxl.load_workbook(dir)
+                    sheet1 = wb.active
+
+                except:
+                    self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
+                    return
             self.diam.removeItem(0)
             for row in sheet1.rows:
                 if type(row[0].value) == int or type(row[0].value) == float:
@@ -616,11 +628,23 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__error4.clear()
 
         try:
-            wb = openpyxl.load_workbook('3.xlsx')
+            fileDir = os.getcwd()
+            fileExt = r"*.xlsx"
+            dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+            wb = openpyxl.load_workbook(dir)
             sheet1 = wb.active
         except:
-            print('non')
-            return
+
+            try:
+                fileDir = os.getcwd()
+                fileExt = r"*.xls"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[1]
+                wb = openpyxl.load_workbook(dir)
+                sheet1 = wb.active
+
+            except:
+                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
+                return
         if self.diam.currentText() == 'Altro':
             pass
         else:
