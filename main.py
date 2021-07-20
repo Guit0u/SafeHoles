@@ -1,5 +1,5 @@
 from PySide2 import QtCore, QtGui, QtWidgets
-from matplotlib import numpy as np
+import numpy as np
 import sys
 import re
 import openpyxl
@@ -480,12 +480,15 @@ class MaFenetre(QtWidgets.QMainWindow):
                             first_param_line = True
                             param_string = param_string.strip()[:-1]
                             parameters = param_string.split(param_sep)
-                            pt = self.points[pointer_dict[directory_pointer]]
-                            pt._add_parameters(parameters)
-                            zref = self.points[0].coordinate[2]
-                            if pt.coordinate[2] != zref:
-                                self.__error11.setText('Tutti i punti non hanno la stessa coordinata in z')
-                                return
+                            if(parameters[0]=='116'):
+                                 print('bonjour')
+                                 pt = self.points[pointer_dict[directory_pointer]]
+                                 pt._add_parameters(parameters)
+                                 print(pt.coordinate)
+                                 zref = self.points[0].coordinate[2]
+                                 if pt.coordinate[2] != zref:
+                                     self.__error11.setText('Tutti i punti non hanno la stessa coordinata in z')
+                                     return
 
                     elif id_code == 'T':  # Terminate
                         for e in self.points:
@@ -555,8 +558,8 @@ class MaFenetre(QtWidgets.QMainWindow):
                 new.write('G83')
             else:
                 new.write('G85')
-            new.write('X' + str(int(point.x)) + 'Y' + str(
-                int(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
+            new.write('X' + str(float(point.x)) + 'Y' + str(
+                float(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
         if (self.Fanuc):
             new.write('\n%')
@@ -723,6 +726,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         wb.close()
 
     def writefi(self):
+        print(self.points)
         option = 'fi'
         self.__error5.clear()
         self.Mx = self.combo.currentText()
