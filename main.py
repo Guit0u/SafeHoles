@@ -346,10 +346,23 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def rechercheIntervalle(self,diametre):
         try:
-            wb = openpyxl.load_workbook('3.xlsx')
+            fileDir = os.getcwd()
+            fileExt = r"*.xlsx"
+            dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+            wb = openpyxl.load_workbook(str(dir))
             sheet1 = wb.active
         except:
-            return
+
+            try:
+                fileDir = os.getcwd()
+                fileExt = r"*.xls"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+                wb = openpyxl.load_workbook(str(dir))
+                sheet1 = wb.active
+
+            except:
+                self.__error4.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
+                return
 
         for row in sheet1.rows:
                diam=str(row[0].value).split('-')
@@ -703,6 +716,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         q = self.__champQ4.text()
         verif = [security, speed, avanzamento, profondeur, r, q]
 
+        print(verif)
 
         for point1 in self.points:
             compt = 0
