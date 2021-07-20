@@ -3,6 +3,8 @@ import numpy as np
 import sys
 import re
 import openpyxl
+import tkinter as tk
+from tkinter.filedialog import askopenfilename
 from openpyxl import Workbook
 
 
@@ -26,6 +28,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         super().__init__()
 
         ##variables globales à la con
+        self.chosenFile = ''
         self.points = []
         self.infopoints = []
         self.compteur = 0
@@ -39,6 +42,13 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Securite = 'Z'
         self.Profondeur = 'Z-0'
         self.Diametre= ''
+
+        self.__bravo = QtWidgets.QLabel("File created")
+        layout7=QtWidgets.QGridLayout()
+        layout7.addWidget(self.__bravo)
+        self.widget7=QtWidgets.QWidget()
+        self.widget7.setLayout(layout7)
+
 
         ##layout1 : rentrer le fichier et le type de sortie
         # self.boutonLire = QtWidgets.QPushButton("entrata")
@@ -54,19 +64,22 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__nul = QtWidgets.QLabel()
         self.__nul2 = QtWidgets.QLabel()
 
+        self.__buttonChoix = QtWidgets.QPushButton("Select File")
+        self.__buttonChoixLabel = QtWidgets.QLabel("File : ")
+
         layout1 = QtWidgets.QGridLayout()
-        layout1.addWidget(self.__champTexte, 1, 1)
+       # layout1.addWidget(self.__champTexte, 1, 1)
         # layout1.addWidget(self.boutonLire, 4,1)
         # layout1.addWidget(self.__champSecurite,1,1)
         # layout1.addWidget(self.__unite,1,0)
         self.__nul2.setText('Scegli il tipo di file di output')
         layout1.addWidget(self.__nul, 3, 1)
+        layout1.addWidget(self.__buttonChoix,1,1)
+        layout1.addWidget(self.__buttonChoixLabel,2,1)
         layout1.addWidget(self.__nul2, 4, 1)
         layout1.addWidget(self.__error1, 0, 5)
         layout1.addWidget(self.__error11, 1, 5)
         layout1.addWidget(self.__labelText, 0, 1)
-        widget1 = QtWidgets.QWidget()
-        widget1.setLayout(layout1)
 
         self.__labelFanuc = QtWidgets.QLabel("Selezionare il tipo di file")
 
@@ -75,7 +88,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout1.addWidget(self.boutonFanuc, 5, 2)
         layout1.addWidget(self.boutonSchlong, 5, 0)
 
-        self.setCentralWidget(widget1)
+        self.widget1 = QtWidgets.QWidget()
+        self.widget1.setLayout(layout1)
+        self.setCentralWidget(self.widget1)
 
         ##layout2 : avortée
         '''
@@ -298,6 +313,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.boutonFanuc.clicked.connect(self.fanuc)
         self.boutonSchlong.clicked.connect(self.read)
+        self.__buttonChoix.clicked.connect(self.choix)
         self.boutonFillettatura.clicked.connect(self.fillettatura)
         self.boutonForaturia.clicked.connect(self.foraturia)
         self.boutonAlesaggio.clicked.connect(self.alesaggio)
@@ -310,6 +326,18 @@ class MaFenetre(QtWidgets.QMainWindow):
         wb.close()
 
     ##les fonctions
+
+    def choix(self):
+        root = tk.Tk()
+        root.withdraw()  # pour ne pas afficher la fenêtre Tk
+
+        self.chosenFile = askopenfilename()
+        if not'.igs' in self.chosenFile:
+            self.__nul.setText("NON. PAS DAKOR.")
+            self.chosenFile=''
+            return
+        self.__buttonChoixLabel.setText('File : '+self.chosenFile)
+        self.__nul.clear()
 
     def testGxx(self):
         input = self.__GxxInput.text()
@@ -406,7 +434,7 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def read(self):
         self.__error1.clear()
-        filename = self.__champTexte.text()
+        filename = self.chosenFile
 
         try:
             with open(filename, 'r') as f:
@@ -721,9 +749,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Rxx = 'R' + str(r)
         print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
 
-        self.write(option)
+        try:
+            self.write(option)
+        except:
+            return
 
         wb.close()
+        self.setCentralWidget(self.widget7)
+
+
 
     def writefi(self):
         print(self.points)
@@ -858,8 +892,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.Qxx = ''
         self.Rxx = 'R' + str(r)
         print(self.Securite, self.Sxx, self.Fxx, self.Profondeur, self.Qxx, self.Rxx)
+        try:
+            self.write(option)
+        except:
+            return
 
-        self.write(option)
+        self.setCentralWidget(self.widget7)
 
 
 class Point():
