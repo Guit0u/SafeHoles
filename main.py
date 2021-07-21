@@ -579,8 +579,6 @@ class MaFenetre(QtWidgets.QMainWindow):
                             first_dict_line = True
 
                     elif id_code == 'P':  # Parameter data
-                        for x in pointer_dict:
-                            print()
                             # Concatenate multiple lines into one string
                         if first_param_line:
                             param_string = data[:64]
@@ -602,8 +600,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                                      return
 
                     elif id_code == 'T':  # Terminate
-                        for e in self.points:
-                            print()
+                        pass
 
             self.setCentralWidget(self.widget3)
             # self.__coord.setText(str(self.points[0].coordinate))
@@ -715,8 +712,6 @@ class MaFenetre(QtWidgets.QMainWindow):
         r = self.__champR4.text()
         q = self.__champQ4.text()
         verif = [security, speed, avanzamento, profondeur, r, q]
-
-        print(verif)
 
         for point1 in self.points:
             compt = 0
