@@ -705,6 +705,24 @@ class MaFenetre(QtWidgets.QMainWindow):
                         self.__FxxInput.setText(str(row[4].value))
         '''
         diametre = self.__champdiam4.text()
+
+        if ',' in diametre:
+            try:
+                element = float(diametre.replace(',', '.'))
+            except ValueError:
+                self.__error4.setText('input deve essere un valore numerico')
+                self.__champR4.clear()
+                return
+        try:
+            diametre = float(diametre)
+        except ValueError:
+            self.__error4.setText('input deve essere un valore numerico')
+            self.__champR4.clear()
+            return
+        if diametre < 0 or diametre > 100000:
+            self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
+            self.__champR4.clear()
+            return
         self.rechercheIntervalle(diametre)
 
 
@@ -742,7 +760,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champSecurite.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la sicurezza')
                     self.__champSecurite.clear()
                     return
@@ -760,10 +778,11 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champProfondeur4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur4.clear()
                     return
+                prodondeur=element
             if element == r:
                 if ',' in element:
                     try:
@@ -778,7 +797,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champR4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
                     self.__champR4.clear()
                     return
@@ -797,7 +816,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champQ4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > prodondeur:
                     self.__error4.setText('intervallo sbagliato per Q')
                     self.__champQ4.clear()
                     return
@@ -809,7 +828,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champQ4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la velocità')
                     self.__champQ4.clear()
                     return
@@ -821,7 +840,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champQ4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la avanzamento')
                     self.__champQ4.clear()
                     return
@@ -877,7 +896,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 self.__error4.setText('input deve essere un valore numerico')
                 self.__champQ4.clear()
                 return
-            if CurrSxx < 0 or CurrSxx > 10000:
+            if CurrSxx < 0 or CurrSxx > 100000:
                 self.__error4.setText('intervallo sbagliato per la velocità')
                 self.__champQ4.clear()
                 return
@@ -888,7 +907,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 self.__error4.setText('input deve essere un valore numerico')
                 self.__champQ4.clear()
                 return
-            if CurrFxx < 0 or CurrFxx > 10000:
+            if CurrFxx < 0 or CurrFxx > 100000:
                 self.__error4.setText('intervallo sbagliato per la avanzamento')
                 self.__champQ4.clear()
                 return
@@ -927,7 +946,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champSecurite5.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error5.setText('intervallo sbagliato per la sicurezza')
                     self.__champSecurite5.clear()
                     return
@@ -945,7 +964,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champProfondeur.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error5.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur.clear()
                     return
@@ -963,7 +982,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error5.setText('input deve essere un valore numerico')
                     self.__champR.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > 100000:
                     self.__error5.setText('intervallo sbagliato per la quota di avvicimento')
                     self.__champR.clear()
                     return
