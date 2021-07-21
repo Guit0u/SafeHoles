@@ -135,7 +135,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__GxxInput.setPlaceholderText("G54")
         self.__error3 = QtWidgets.QLabel('')
 
-        self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
+        self.boutonForaturia = QtWidgets.QPushButton("Foratura")
         self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
         self.boutonAlesaggio = QtWidgets.QPushButton("Alesaggio")
         self.__interval = QtWidgets.QLabel("Sistema di coordinate")
@@ -176,7 +176,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champSecurite4.setPlaceholderText("100")
         layout4.addWidget(self.__champSecurite4, 3, 1)
         self.__error4 = QtWidgets.QLabel()
-        layout4.addWidget(self.__error4, 0, 5)
+        layout4.addWidget(self.__error4, 10, 10)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
         layout4.addWidget(self.boutonEntrata4, 10, 1)
         self.__SxxInput = QtWidgets.QLineEdit("")
@@ -765,6 +765,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur4.clear()
                     return
+                prodondeur=element
             if element == r:
                 if ',' in element:
                     try:
@@ -798,7 +799,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champQ4.clear()
                     return
-                if element < 0 or element > 10000:
+                if element < 0 or element > prodondeur:
                     self.__error4.setText('intervallo sbagliato per Q')
                     self.__champQ4.clear()
                     return
