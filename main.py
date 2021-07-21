@@ -59,7 +59,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champTexte.setPlaceholderText("esempio.igs")
         self.__labelText = QtWidgets.QLabel("Inserisci il nome del file")
         self.__champSecurite = QtWidgets.QLineEdit("")
-        self.__champSecurite.setPlaceholderText("42")
+        self.__champSecurite.setPlaceholderText("100")
         self.__unite = QtWidgets.QLabel("Sicurezza (millimetri)")
         self.__error1 = QtWidgets.QLabel()
         self.__error11 = QtWidgets.QLabel()
@@ -191,24 +191,24 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout4.addWidget(self.__labelFxx, 9, 0)
         self.__labelProfondeur4 = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur4 = QtWidgets.QLineEdit("")
-        self.__champProfondeur4.setPlaceholderText("42")
+        self.__champProfondeur4.setPlaceholderText("30")
         layout4.addWidget(self.__labelProfondeur4, 4, 0)
         layout4.addWidget(self.__champProfondeur4, 4, 1)
         self.__R4 = QtWidgets.QLabel("quota di avvicimento (R) (mm) :")
         self.__champR4 = QtWidgets.QLineEdit("")
-        self.__champR4.setPlaceholderText("42")
+        self.__champR4.setPlaceholderText("2")
         layout4.addWidget(self.__champR4, 6, 1)
         layout4.addWidget(self.__R4, 6, 0)
         self.__Q4 = QtWidgets.QLabel("Q (mm) :")
         self.__champQ4 = QtWidgets.QLineEdit("")
-        self.__champQ4.setPlaceholderText("42")
+        self.__champQ4.setPlaceholderText("2")
         layout4.addWidget(self.__Q4, 7, 0)
         layout4.addWidget(self.__champQ4, 7, 1)
 
         self.__diam4 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
         self.__excelyes = QtWidgets.QLabel("Usa i valori in excel : ")
         self.__champdiam4 = QtWidgets.QLineEdit("")
-        self.__champdiam4.setPlaceholderText("42")
+        self.__champdiam4.setPlaceholderText("5")
         layout4.addWidget(self.__diam4, 1, 0)
         layout4.addWidget(self.__champdiam4, 1, 1)
         layout4.addWidget(self.__excelyes,0,0)
@@ -258,7 +258,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__securite5 = QtWidgets.QLabel('z di sicurezza')
         layout5.addWidget(self.__securite5, 1, 0)
         self.__champSecurite5 = QtWidgets.QLineEdit("")
-        self.__champSecurite5.setPlaceholderText("42")
+        self.__champSecurite5.setPlaceholderText("100")
         layout5.addWidget(self.__champSecurite5, 1, 1)
 
         self.combo = QtWidgets.QComboBox()
@@ -279,17 +279,17 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.__labelProfondeur = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur = QtWidgets.QLineEdit("")
-        self.__champProfondeur.setPlaceholderText("42")
+        self.__champProfondeur.setPlaceholderText("30")
         layout5.addWidget(self.__labelProfondeur, 4, 0)
         layout5.addWidget(self.__champProfondeur, 4, 1)
         self.__R = QtWidgets.QLabel("quota di avvicimento (mm) :")
         self.__champR = QtWidgets.QLineEdit("")
-        self.__champR.setPlaceholderText("42")
+        self.__champR.setPlaceholderText("2")
         layout5.addWidget(self.__champR, 5, 1)
         layout5.addWidget(self.__R, 5, 0)
         self.__diam5 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
         self.__champdiam5 = QtWidgets.QLineEdit("")
-        self.__champdiam5.setPlaceholderText("42")
+        self.__champdiam5.setPlaceholderText("5")
         layout5.addWidget(self.__diam5, 7, 0)
         layout5.addWidget(self.__champdiam5, 7, 1)
         self.__error5 = QtWidgets.QLabel()
@@ -305,11 +305,11 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         self.__labelNewSxx = QtWidgets.QLabel("Speed (t/m) :")
         self.__champNewSxx = QtWidgets.QLineEdit("")
-        self.__champNewSxx.setPlaceholderText("42")
+        self.__champNewSxx.setPlaceholderText("650")
 
         self.__labelNewFxx = QtWidgets.QLabel("Avanzamento (F) (mm) :")
         self.__champNewFxx = QtWidgets.QLineEdit("")
-        self.__champNewFxx.setPlaceholderText("42")
+        self.__champNewFxx.setPlaceholderText("75")
 
         layout5.addWidget(self.__labelNewSxx, 2, 0)
         layout5.addWidget(self.__champNewSxx, 2, 1)
@@ -346,10 +346,23 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def rechercheIntervalle(self,diametre):
         try:
-            wb = openpyxl.load_workbook('3.xlsx')
+            fileDir = os.getcwd()
+            fileExt = r"*.xlsx"
+            dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+            wb = openpyxl.load_workbook(str(dir))
             sheet1 = wb.active
         except:
-            return
+
+            try:
+                fileDir = os.getcwd()
+                fileExt = r"*.xls"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+                wb = openpyxl.load_workbook(str(dir))
+                sheet1 = wb.active
+
+            except:
+                self.__error4.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
+                return
 
         for row in sheet1.rows:
                diam=str(row[0].value).split('-')
@@ -702,6 +715,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         q = self.__champQ4.text()
         verif = [security, speed, avanzamento, profondeur, r, q]
 
+        print(verif)
 
         for point1 in self.points:
             compt = 0
