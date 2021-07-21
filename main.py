@@ -782,7 +782,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur4.clear()
                     return
-                prodondeur=element
+                profondeur=element
             if element == r:
                 if ',' in element:
                     try:
@@ -816,7 +816,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('input deve essere un valore numerico')
                     self.__champQ4.clear()
                     return
-                if element < 0 or element > prodondeur:
+                if element < 0 or element > profondeur:
                     self.__error4.setText('intervallo sbagliato per Q')
                     self.__champQ4.clear()
                     return
