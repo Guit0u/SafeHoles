@@ -609,7 +609,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.setCentralWidget(self.widget3)
             # self.__coord.setText(str(self.points[0].coordinate))
         except FileNotFoundError:
-            self.__error1.setText('Il file non esiste')
+            self.__nul.setText('Il file non esiste')
             self.__champTexte.clear()
             return
 
