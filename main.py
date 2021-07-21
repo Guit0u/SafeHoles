@@ -666,8 +666,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 new.write('G83')
             else:
                 new.write('G85')
-            new.write('X' + str(float(point.x)) + 'Y' + str(
-                float(point.y)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
+            new.write('X' + str(round(float(point.x),3)) + 'Y' + str(round(float(point.y),3)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
         if (self.Fanuc):
             new.write('\n%')
