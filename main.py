@@ -65,6 +65,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__error11 = QtWidgets.QLabel()
         self.__error2 = QtWidgets.QLabel()
         self.__nul = QtWidgets.QLabel()
+        self.__nul.setStyleSheet("color : red")
         self.__nul2 = QtWidgets.QLabel()
 
         self.__buttonChoix = QtWidgets.QPushButton("Select File")
@@ -134,8 +135,9 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__GxxInput = QtWidgets.QLineEdit('G54')
         self.__GxxInput.setPlaceholderText("G54")
         self.__error3 = QtWidgets.QLabel('')
+        self.__error3.setStyleSheet("color : red")
 
-        self.boutonForaturia = QtWidgets.QPushButton("Foraturia")
+        self.boutonForaturia = QtWidgets.QPushButton("Foratura")
         self.boutonFillettatura = QtWidgets.QPushButton("Filettatura")
         self.boutonAlesaggio = QtWidgets.QPushButton("Alesaggio")
         self.__interval = QtWidgets.QLabel("Sistema di coordinate")
@@ -176,7 +178,8 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.__champSecurite4.setPlaceholderText("100")
         layout4.addWidget(self.__champSecurite4, 3, 1)
         self.__error4 = QtWidgets.QLabel()
-        layout4.addWidget(self.__error4, 0, 5)
+        self.__error4.setStyleSheet("color : red")
+        layout4.addWidget(self.__error4, 9, 2)
         self.boutonEntrata4 = QtWidgets.QPushButton("entrata")
         layout4.addWidget(self.boutonEntrata4, 10, 1)
         self.__SxxInput = QtWidgets.QLineEdit("")
@@ -293,6 +296,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         layout5.addWidget(self.__diam5, 7, 0)
         layout5.addWidget(self.__champdiam5, 7, 1)
         self.__error5 = QtWidgets.QLabel()
+        self.__error5.setStyleSheet("color : red")
         layout5.addWidget(self.__error5, 1, 5)
 
         self.boutonEntrata5 = QtWidgets.QPushButton("entrata")
