@@ -218,24 +218,14 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         #self.diam = QtWidgets.QComboBox()
 
-        # RECHERCHE DES VALEURS DANS L'EXCEL
-        '''  for row in sheet1.rows:
-            print(row[0].value)
-            d = str(row[0].value).split('-')
-            print(d)
-            d = d[-1]
-            print(d)
-            try:
-                d=float(d)
-                print('bonsoir')
-                self.diam.addItem(str(row[0].value))
-                print('mé')
-            except:
-                pass
-        '''
         self.metal = QtWidgets.QComboBox()
-        self.metal.addItem('Alluminio')
-        self.metal.addItem('Acciaio')
+        # RECHERCHE DES VALEURS DANS L'EXCEL
+        lst = list(sheet1.rows)
+
+        for i in range(1,sheet1.max_column):
+            if(lst[0][i].value != None):
+                print(lst[0][i].value)
+                self.metal.addItem(lst[0][i].value)
 
         #layout4.addWidget(self.diam, 0, 1)
         layout4.addWidget(self.metal, 1, 2)
@@ -471,7 +461,14 @@ class MaFenetre(QtWidgets.QMainWindow):
                    haut = float(diam[-1])
                    bas = float(diam[0])
                    if bas<=float(diametre)<haut:
-                       if self.metal.currentText() == 'Alluminio':
+                       print(str(row[2*self.metal.currentIndex()+1].value))
+                       self.__SxxInput.setText(str(row[2*self.metal.currentIndex()+1].value))
+                       print('F : '+str(row[2*self.metal.currentIndex()+2].value))
+                       self.__FxxInput.setText(str(row[2*self.metal.currentIndex()+2].value))
+                       wb.close()
+                       return
+
+                       '''if self.metal.currentText() == 'Alluminio':
                            self.__SxxInput.setText(str(row[1].value))
                            self.__FxxInput.setText(str(row[2].value))
                            wb.close()
@@ -480,7 +477,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                            self.__SxxInput.setText(str(row[3].value))
                            self.__FxxInput.setText(str(row[4].value))
                            wb.close()
-                           return
+                           return'''
                except:
                    pass
         wb.close()
