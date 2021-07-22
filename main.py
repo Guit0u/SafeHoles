@@ -157,7 +157,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             fileExt = r"*.xlsx"
             dir=list(pathlib.Path(fileDir).glob(fileExt))[0]
             wb = openpyxl.load_workbook(str(dir))
-            sheet1 = wb.active
+            sheet1 = wb.get_sheet_by_name('Foratura')
         except:
 
             try:
@@ -165,7 +165,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 fileExt = r"*.xls"
                 dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
                 wb = openpyxl.load_workbook(str(dir))
-                sheet1 = wb.active
+                sheet1 = wb.get_sheet_by_name('Foratura')
 
             except:
                 self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
@@ -226,7 +226,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             if(lst[0][i].value != None):
                 print(lst[0][i].value)
                 self.metal.addItem(lst[0][i].value)
-
+        wb.close()
         #layout4.addWidget(self.diam, 0, 1)
         layout4.addWidget(self.metal, 1, 2)
 
@@ -234,6 +234,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         # self.cb.toggle()
         self.diamo.stateChanged.connect(self.newParameters2)
         layout4.addWidget(self.diamo, 0, 2)
+
 
         self.__labelFxx.hide()
         self.__FxxInput.hide()
@@ -322,7 +323,8 @@ class MaFenetre(QtWidgets.QMainWindow):
             fileExt = r"*.xlsx"
             dir=list(pathlib.Path(fileDir).glob(fileExt))[0]
             wb = openpyxl.load_workbook(str(dir))
-            sheet1 = wb.active
+            sheet1 = wb.get_sheet_by_name('Alesage')
+            print(sheet1)
         except:
 
             try:
@@ -330,7 +332,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 fileExt = r"*.xls"
                 dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
                 wb = openpyxl.load_workbook(str(dir))
-                sheet1 = wb.active
+                sheet1 = wb.get_sheet_by_name('Alesage')
 
             except:
                 self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
@@ -379,24 +381,14 @@ class MaFenetre(QtWidgets.QMainWindow):
         #self.diam = QtWidgets.QComboBox()
 
         # RECHERCHE DES VALEURS DANS L'EXCEL
-        '''  for row in sheet1.rows:
-            print(row[0].value)
-            d = str(row[0].value).split('-')
-            print(d)
-            d = d[-1]
-            print(d)
-            try:
-                d=float(d)
-                print('bonsoir')
-                self.diam.addItem(str(row[0].value))
-                print('mé')
-            except:
-                pass
-        '''
-        self.metal6 = QtWidgets.QComboBox()
-        self.metal6.addItem('Alluminio')
-        self.metal6.addItem('Acciaio')
 
+        self.metal6 = QtWidgets.QComboBox()
+        lst = list(sheet1.rows)
+        for i in range(1,sheet1.max_column):
+            if(lst[0][i].value != None):
+                print(lst[0][i].value)
+                self.metal6.addItem(lst[0][i].value)
+        wb.close()
         #layout4.addWidget(self.diam, 0, 1)
         layout6.addWidget(self.metal6, 1, 2)
 
@@ -435,13 +427,16 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     ##les fonctions
 
-    def rechercheIntervalle(self,diametre):
+    def rechercheIntervalle(self,diametre,foratura):
         try:
             fileDir = os.getcwd()
             fileExt = r"*.xlsx"
             dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
             wb = openpyxl.load_workbook(str(dir))
-            sheet1 = wb.active
+            if(foratura):
+                sheet1 = wb.get_sheet_by_name('Foratura')
+            else:
+                sheet1 = wb.get_sheet_by_name('Alesage')
         except:
 
             try:
@@ -449,7 +444,10 @@ class MaFenetre(QtWidgets.QMainWindow):
                 fileExt = r"*.xls"
                 dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
                 wb = openpyxl.load_workbook(str(dir))
-                sheet1 = wb.active
+                if (foratura):
+                    sheet1 = wb.get_sheet_by_name('Foratura')
+                else:
+                    sheet1 = wb.get_sheet_by_name('Alesage')
 
             except:
                 self.__error4.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
@@ -461,11 +459,19 @@ class MaFenetre(QtWidgets.QMainWindow):
                    haut = float(diam[-1])
                    bas = float(diam[0])
                    if bas<=float(diametre)<haut:
-                       print(str(row[2*self.metal.currentIndex()+1].value))
-                       self.__SxxInput.setText(str(row[2*self.metal.currentIndex()+1].value))
-                       print('F : '+str(row[2*self.metal.currentIndex()+2].value))
-                       self.__FxxInput.setText(str(row[2*self.metal.currentIndex()+2].value))
-                       wb.close()
+                       if(foratura):
+                           print(str(row[2*self.metal.currentIndex()+1].value))
+                           self.__SxxInput.setText(str(row[2*self.metal.currentIndex()+1].value))
+                           print('F : '+str(row[2*self.metal.currentIndex()+2].value))
+                           self.__FxxInput.setText(str(row[2*self.metal.currentIndex()+2].value))
+                           wb.close()
+                       else:
+                           print(str(row[2 * self.metal.currentIndex() + 1].value))
+                           self.__SxxInput6.setText(str(row[2 * self.metal.currentIndex() + 1].value))
+                           print('F : ' + str(row[2 * self.metal.currentIndex() + 2].value))
+                           self.__FxxInput6.setText(str(row[2 * self.metal.currentIndex() + 2].value))
+                           wb.close()
+
                        return
 
                        '''if self.metal.currentText() == 'Alluminio':
@@ -809,7 +815,8 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error6.setText('intervallo sbagliato per la quota di avvicimento')
             self.__champdiam6.clear()
             return
-        self.rechercheIntervalle(diametre)
+
+        self.rechercheIntervalle(diametre,False)
 
         security = self.__champSecurite6.text()
         speed = self.__SxxInput6.text()
@@ -972,7 +979,7 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
             self.__champdiam4.clear()
             return
-        self.rechercheIntervalle(diametre)
+        self.rechercheIntervalle(diametre,True)
 
 
         security = self.__champSecurite4.text()
