@@ -358,15 +358,15 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.boutonEntrata6 = QtWidgets.QPushButton("entrata")
         layout6.addWidget(self.boutonEntrata6, 10, 1)
         self.__SxxInput6 = QtWidgets.QLineEdit("")
-        self.__SxxInput.setPlaceholderText("650")
-        layout6.addWidget(self.__SxxInput, 8, 1)
+        self.__SxxInput6.setPlaceholderText("650")
+        layout6.addWidget(self.__SxxInput6, 8, 1)
         self.__labelSxx6 = QtWidgets.QLabel("Speed(S) (t/s)")
-        layout6.addWidget(self.__labelSxx, 8, 0)
+        layout6.addWidget(self.__labelSxx6, 8, 0)
         self.__FxxInput6 = QtWidgets.QLineEdit("")
         self.__FxxInput6.setPlaceholderText("75")
-        layout6.addWidget(self.__FxxInput, 9, 1)
+        layout6.addWidget(self.__FxxInput6, 9, 1)
         self.__labelFxx6 = QtWidgets.QLabel("Avanzamento(F) (mm)")
-        layout6.addWidget(self.__labelFxx, 9, 0)
+        layout6.addWidget(self.__labelFxx6, 9, 0)
         self.__labelProfondeur6 = QtWidgets.QLabel("Profondità (mm) :")
         self.__champProfondeur6 = QtWidgets.QLineEdit("")
         self.__champProfondeur6.setPlaceholderText("30")
@@ -408,12 +408,12 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.metal6.addItem('Acciaio')
 
         #layout4.addWidget(self.diam, 0, 1)
-        layout6.addWidget(self.metal, 1, 2)
+        layout6.addWidget(self.metal6, 1, 2)
 
         self.diamo6 = QtWidgets.QCheckBox('Altro foro, senza usare valore del file excel')
         # self.cb.toggle()
-        self.diamo6.stateChanged.connect(self.newParameters2)
-        layout6.addWidget(self.diamo, 0, 2)
+        self.diamo6.stateChanged.connect(self.newParameters6)
+        layout6.addWidget(self.diamo6, 0, 2)
 
         self.__labelFxx6.hide()
         self.__FxxInput6.hide()
@@ -598,6 +598,23 @@ class MaFenetre(QtWidgets.QMainWindow):
 
            self.metal.show()
 
+    def newParameters6(self):
+        if (self.diamo6.isChecked()):
+            self.__labelFxx6.show()
+            self.__FxxInput6.show()
+            self.__labelSxx6.show()
+            self.__SxxInput6.show()
+            self.metal6.hide()
+        else:
+            self.__labelFxx6.hide()
+            self.__FxxInput6.hide()
+            self.__labelSxx6.hide()
+            self.__SxxInput6.hide()
+
+            self.__FxxInput6.clear()
+            self.__SxxInput6.clear()
+
+            self.metal6.show()
 
     def foraturia(self):
         if not (self.testGxx()):
@@ -799,7 +816,9 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         security = self.__champSecurite6.text()
         speed = self.__SxxInput6.text()
+        print(speed)
         avanzamento = self.__FxxInput6.text()
+        print(avanzamento)
         profondeur = self.__champProfondeur6.text()
         r = self.__champR6.text()
         verif = [security, speed, avanzamento, profondeur, r]
@@ -877,7 +896,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 try:
                     element = int(element)
                 except ValueError:
-                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__error6.setText('mé')
                     self.__SxxInput6.clear()
                     return
                 if element < 0 or element > 100000:
@@ -889,7 +908,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 try:
                     element = int(element)
                 except ValueError:
-                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__error6.setText('plz')
                     self.__FxxInput6.clear()
                     return
                 if element < 0 or element > 100000:
