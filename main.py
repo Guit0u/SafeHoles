@@ -893,8 +893,6 @@ class MaFenetre(QtWidgets.QMainWindow):
                 try:
                     element = int(element)
                 except ValueError:
-                    self.__error6.setText('mé')
-                    self.__SxxInput6.clear()
                     return
                 if element < 0 or element > 100000:
                     self.__error6.setText('intervallo sbagliato per la velocità')
@@ -1169,6 +1167,16 @@ class MaFenetre(QtWidgets.QMainWindow):
         profondeur = self.__champProfondeur.text()
         r = self.__champR.text()
         diametre=self.__champdiam5.text()
+        try:
+            diametre = int(diametre)
+        except ValueError:
+            self.__error5.setText('input deve essere un valore numerico')
+            self.__champdiam5.clear()
+            return
+        if diametre < 0 or diametre > 100000:
+            self.__error4.setText('intervallo sbagliato per la velocità')
+            self.__champdiam5.clear()
+            return
 
         for point1 in self.points:
             compt = 0
