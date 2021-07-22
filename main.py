@@ -816,7 +816,8 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__champdiam6.clear()
             return
 
-        self.rechercheIntervalle(diametre,False)
+        if not self.diamo6.isChecked():
+            self.rechercheIntervalle(diametre,False)
 
         security = self.__champSecurite6.text()
         speed = self.__SxxInput6.text()
@@ -977,8 +978,8 @@ class MaFenetre(QtWidgets.QMainWindow):
             self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
             self.__champdiam4.clear()
             return
-        self.rechercheIntervalle(diametre,True)
-
+        if not self.diamo.isChecked():
+          self.rechercheIntervalle(diametre,True)
 
         security = self.__champSecurite4.text()
         speed = self.__SxxInput.text()
