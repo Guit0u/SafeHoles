@@ -317,6 +317,102 @@ class MaFenetre(QtWidgets.QMainWindow):
 
         ##layout6 : alesage
         layout6 = QtWidgets.QGridLayout()
+        try:
+            fileDir = os.getcwd()
+            fileExt = r"*.xlsx"
+            dir=list(pathlib.Path(fileDir).glob(fileExt))[0]
+            wb = openpyxl.load_workbook(str(dir))
+            sheet1 = wb.active
+        except:
+
+            try:
+                fileDir = os.getcwd()
+                fileExt = r"*.xls"
+                dir = list(pathlib.Path(fileDir).glob(fileExt))[0]
+                wb = openpyxl.load_workbook(str(dir))
+                sheet1 = wb.active
+
+            except:
+                self.__nul.setText('excel della tabella dei diametri non esiste (.xls o .xlsx)')
+                return
+
+        layout6 = QtWidgets.QGridLayout()
+        self.__securite = QtWidgets.QLabel('z di sicurezza')
+        layout6.addWidget(self.__securite, 3, 0)
+        self.__champSecurite6 = QtWidgets.QLineEdit("")
+        self.__champSecurite6.setPlaceholderText("100")
+        layout6.addWidget(self.__champSecurite6, 3, 1)
+        self.__error6 = QtWidgets.QLabel()
+        self.__error6.setStyleSheet("color : red")
+        layout6.addWidget(self.__error6, 10, 10)
+        self.boutonEntrata6 = QtWidgets.QPushButton("entrata")
+        layout6.addWidget(self.boutonEntrata6, 10, 1)
+        self.__SxxInput6 = QtWidgets.QLineEdit("")
+        self.__SxxInput.setPlaceholderText("650")
+        layout6.addWidget(self.__SxxInput, 8, 1)
+        self.__labelSxx6 = QtWidgets.QLabel("Speed(S) (t/s)")
+        layout6.addWidget(self.__labelSxx, 8, 0)
+        self.__FxxInput6 = QtWidgets.QLineEdit("")
+        self.__FxxInput6.setPlaceholderText("75")
+        layout6.addWidget(self.__FxxInput, 9, 1)
+        self.__labelFxx6 = QtWidgets.QLabel("Avanzamento(F) (mm)")
+        layout6.addWidget(self.__labelFxx, 9, 0)
+        self.__labelProfondeur6 = QtWidgets.QLabel("Profondità (mm) :")
+        self.__champProfondeur6 = QtWidgets.QLineEdit("")
+        self.__champProfondeur6.setPlaceholderText("30")
+        layout6.addWidget(self.__labelProfondeur6, 4, 0)
+        layout6.addWidget(self.__champProfondeur6, 4, 1)
+        self.__R6 = QtWidgets.QLabel("quota di avvicimento (R) (mm) :")
+        self.__champR6 = QtWidgets.QLineEdit("")
+        self.__champR6.setPlaceholderText("2")
+        layout6.addWidget(self.__champR6, 6, 1)
+        layout6.addWidget(self.__R6, 6, 0)
+
+        self.__diam6 = QtWidgets.QLabel("Diametro d'il foro (mm) :")
+        self.__excelyes = QtWidgets.QLabel("Usa i valori in excel : ")
+        self.__champdiam6 = QtWidgets.QLineEdit("")
+        self.__champdiam6.setPlaceholderText("5")
+        layout6.addWidget(self.__diam6, 1, 0)
+        layout6.addWidget(self.__champdiam6, 1, 1)
+        layout6.addWidget(self.__excelyes,0,0)
+
+        #self.diam = QtWidgets.QComboBox()
+
+        # RECHERCHE DES VALEURS DANS L'EXCEL
+        '''  for row in sheet1.rows:
+            print(row[0].value)
+            d = str(row[0].value).split('-')
+            print(d)
+            d = d[-1]
+            print(d)
+            try:
+                d=float(d)
+                print('bonsoir')
+                self.diam.addItem(str(row[0].value))
+                print('mé')
+            except:
+                pass
+        '''
+        self.metal6 = QtWidgets.QComboBox()
+        self.metal6.addItem('Alluminio')
+        self.metal6.addItem('Acciaio')
+
+        #layout4.addWidget(self.diam, 0, 1)
+        layout6.addWidget(self.metal, 1, 2)
+
+        self.diamo6 = QtWidgets.QCheckBox('Altro foro, senza usare valore del file excel')
+        # self.cb.toggle()
+        self.diamo6.stateChanged.connect(self.newParameters2)
+        layout6.addWidget(self.diamo, 0, 2)
+
+        self.__labelFxx6.hide()
+        self.__FxxInput6.hide()
+        self.__labelSxx6.hide()
+        self.__SxxInput6.hide()
+        #self.__champdiam4.hide()
+        #self.__diam4.hide()
+
+
         self.widget6 = QtWidgets.QWidget()
         self.widget6.setLayout(layout6)
 
@@ -330,6 +426,7 @@ class MaFenetre(QtWidgets.QMainWindow):
         self.boutonAlesaggio.clicked.connect(self.alesaggio)
         self.boutonEntrata5.clicked.connect(self.writefi)
         self.boutonEntrata4.clicked.connect(self.writefo)
+        self.boutonEntrata6.clicked.connect(self.writeal)
         # self.boutonLire.clicked.connect(self.read)
         # self.boutonLire2.clicked.connect(self.FtoPayRespects)
         # self.boutonSecurite.clicked.connect(self.prof)
@@ -665,7 +762,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                 new.write('G84')
             elif option == 'fo':
                 new.write('G83')
-            else:
+            elif option == 'al':
                 new.write('G85')
             new.write('X' + str(round(float(point.x),3)) + 'Y' + str(round(float(point.y),3)) + self.Profondeur + self.Rxx + self.Qxx + self.Fxx + '\n')
         new.write('M30')
@@ -674,6 +771,142 @@ class MaFenetre(QtWidgets.QMainWindow):
 
     def writeal(self):
         option = 'al'
+        self.__error6.clear()
+
+        diametre = self.__champdiam6.text()
+
+        if ',' in diametre:
+            try:
+                element = float(diametre.replace(',', '.'))
+            except ValueError:
+                self.__error6.setText('input deve essere un valore numerico')
+                self.__champdiam6.clear()
+                return
+        try:
+            diametre = float(diametre)
+        except ValueError:
+            self.__error6.setText('input deve essere un valore numerico')
+            self.__champdiam6.clear()
+            return
+        if diametre < 0 or diametre > 100000:
+            self.__error6.setText('intervallo sbagliato per la quota di avvicimento')
+            self.__champdiam6.clear()
+            return
+        self.rechercheIntervalle(diametre)
+
+        security = self.__champSecurite6.text()
+        speed = self.__SxxInput6.text()
+        avanzamento = self.__FxxInput6.text()
+        profondeur = self.__champProfondeur6.text()
+        r = self.__champR6.text()
+        verif = [security, speed, avanzamento, profondeur, r]
+
+        print(verif)
+
+        for point1 in self.points:
+            compt = 0
+            for point2 in self.points:
+                if ((float(point1.coordinate[0]) - float(point2.coordinate[0])) ** 2 + (
+                        float(point1.coordinate[1]) - float(point2.coordinate[1])) ** 2) ** 1 / 2 < float(diametre) + 1:
+                    compt += 1
+            if compt > 1:
+                self.__error6.setText('due punti o due fori si sovrappongono')
+                return
+
+        for element in verif:
+            if element == security:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error6.setText('input deve essere un valore numerico')
+                        self.__champSecurite6.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__champSecurite6.clear()
+                    return
+                if element < 0 or element > 100000:
+                    self.__error6.setText('intervallo sbagliato per la sicurezza')
+                    self.__champSecurite6.clear()
+                    return
+            if element == profondeur:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error6.setText('input deve essere un valore numerico')
+                        self.__champProfondeur6.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__champProfondeur6.clear()
+                    return
+                if element < 0 or element > 100000:
+                    self.__error6.setText('intervallo sbagliato per la profondità')
+                    self.__champProfondeur6.clear()
+                    return
+                profondeur = element
+            if element == r:
+                if ',' in element:
+                    try:
+                        element = float(element.replace(',', '.'))
+                    except ValueError:
+                        self.__error6.setText('input deve essere un valore numerico')
+                        self.__champR6.clear()
+                        return
+                try:
+                    element = float(element)
+                except ValueError:
+                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__champR6.clear()
+                    return
+                if element < 0 or element > 100000:
+                    self.__error6.setText('intervallo sbagliato per la quota di avvicimento')
+                    self.__champR6.clear()
+                    return
+
+            if element == speed:
+                try:
+                    element = int(element)
+                except ValueError:
+                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__SxxInput6.clear()
+                    return
+                if element < 0 or element > 100000:
+                    self.__error6.setText('intervallo sbagliato per la velocità')
+                    self.__SxxInput6.clear()
+                    return
+
+            if element == avanzamento:
+                try:
+                    element = int(element)
+                except ValueError:
+                    self.__error6.setText('input deve essere un valore numerico')
+                    self.__FxxInput6.clear()
+                    return
+                if element < 0 or element > 100000:
+                    self.__error6.setText('intervallo sbagliato per la avanzamento')
+                    self.__FxxInput6.clear()
+                    return
+
+        self.Securite = 'Z' + str(security)
+        self.Sxx = 'S' + str(speed)
+        self.Fxx = 'F' + str(avanzamento)
+        self.Profondeur = 'Z-' + str(profondeur)
+        self.Rxx = 'R' + str(r)
+
+        try:
+            self.write(option)
+        except:
+            return
+
+        self.setCentralWidget(self.widget7)
+
         pass
 
     def writefo(self):
@@ -708,17 +941,17 @@ class MaFenetre(QtWidgets.QMainWindow):
                 element = float(diametre.replace(',', '.'))
             except ValueError:
                 self.__error4.setText('input deve essere un valore numerico')
-                self.__champR4.clear()
+                self.__champdiam4.clear()
                 return
         try:
             diametre = float(diametre)
         except ValueError:
             self.__error4.setText('input deve essere un valore numerico')
-            self.__champR4.clear()
+            self.__champdiam4.clear()
             return
         if diametre < 0 or diametre > 100000:
             self.__error4.setText('intervallo sbagliato per la quota di avvicimento')
-            self.__champR4.clear()
+            self.__champdiam4.clear()
             return
         self.rechercheIntervalle(diametre)
 
@@ -779,7 +1012,7 @@ class MaFenetre(QtWidgets.QMainWindow):
                     self.__error4.setText('intervallo sbagliato per la profondità')
                     self.__champProfondeur4.clear()
                     return
-                profondeur=element
+                profondeur = element
             if element == r:
                 if ',' in element:
                     try:
@@ -823,11 +1056,11 @@ class MaFenetre(QtWidgets.QMainWindow):
                     element = int(element)
                 except ValueError:
                     self.__error4.setText('input deve essere un valore numerico')
-                    self.__champQ4.clear()
+                    self.__SxxInput.clear()
                     return
                 if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la velocità')
-                    self.__champQ4.clear()
+                    self.__SxxInput.clear()
                     return
 
             if element == avanzamento:
@@ -835,11 +1068,11 @@ class MaFenetre(QtWidgets.QMainWindow):
                     element = int(element)
                 except ValueError:
                     self.__error4.setText('input deve essere un valore numerico')
-                    self.__champQ4.clear()
+                    self.__FxxInput.clear()
                     return
                 if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la avanzamento')
-                    self.__champQ4.clear()
+                    self.__FxxInput.clear()
                     return
 
         self.Securite = 'Z' + str(security)
