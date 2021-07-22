@@ -1006,17 +1006,17 @@ class MaFenetre(QtWidgets.QMainWindow):
                         element = float(element.replace(',', '.'))
                     except ValueError:
                         self.__error4.setText('input deve essere un valore numerico')
-                        self.__champSecurite.clear()
+                        self.__champSecurite4.clear()
                         return
                 try:
                     element = float(element)
                 except ValueError:
                     self.__error4.setText('input deve essere un valore numerico')
-                    self.__champSecurite.clear()
+                    self.__champSecurite4.clear()
                     return
                 if element < 0 or element > 100000:
                     self.__error4.setText('intervallo sbagliato per la sicurezza')
-                    self.__champSecurite.clear()
+                    self.__champSecurite4.clear()
                     return
             if element == profondeur:
                 if ',' in element:
